@@ -1,0 +1,15 @@
+.horse-table {
+    margin: 0 auto;
+    margin-top: 30px;
+    opacity: 0.9;
+}
+
+.add-horse-button{
+    float: left;
+    margin: 0 auto;
+    margin-top: -50px;
+}
+
+.ant-table td { white-space: nowrap; }
+
+

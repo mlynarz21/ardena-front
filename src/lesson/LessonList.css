@@ -1,0 +1,26 @@
+.lesson-calendar{
+     flex: 1;
+     margin: 10px;
+     margin-top: 32px;
+ }
+
+.flex-container{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.lesson-table{
+    flex: 2;
+    margin: 10px;
+}
+
+.reservation-table{
+    margin: 30px;
+}
+
+.date-alert{
+    text-align : center;
+}
+.ant-radio-group-small{
+    visibility: hidden;
+}
