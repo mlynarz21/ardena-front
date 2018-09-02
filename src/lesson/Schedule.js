@@ -300,7 +300,7 @@ class Schedule extends Component {
                                     // pagination={false}
                                 />
                                     <Button type="primary"
-                                            className="add-lesson-button"
+                                            className={this.state.lessonArray.length>0 ? 'add-lesson-button' : 'add-lesson-button-no-data'}
                                             onClick={this.showModal}>
                                         Add lesson</Button>
                                 </div>

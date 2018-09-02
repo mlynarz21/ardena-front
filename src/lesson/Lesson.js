@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import './Lesson.css';
-import { Popconfirm, Table, Tabs} from 'antd';
+import {Alert, Divider, Popconfirm, Table, Tabs} from 'antd';
 import LoadingIndicator  from '../common/LoadingIndicator';
 import NotFound from '../common/NotFound';
 import ServerError from '../common/ServerError';
 import {getLesson} from "../util/APIUtils";
+import {isInstructor} from "../constants";
 
 const TabPane = Tabs.TabPane;
 
@@ -14,7 +15,7 @@ class Lesson extends Component {
         super(props);
         this.state = {
             isLoading: true,
-            lesson : null
+            lesson: null
         }
     }
 
@@ -57,12 +58,12 @@ class Lesson extends Component {
             dataIndex: 'status',
             key: 'status',
             width: '25%'
-        },{
+        }, {
             title: 'Rider Name',
             dataIndex: 'rider.name',
             key: 'rider',
             width: '25%'
-        },{
+        }, {
             title: 'Horse',
             dataIndex: 'horse',
             key: 'horse',
@@ -77,10 +78,37 @@ class Lesson extends Component {
                     <a>Reserve</a>
                 </Popconfirm>)
         }];
+        if (localStorage.getItem(isInstructor) === 'true') {
+            return (
+                <div className="lesson-container">
+                    <div className="flex-alert">
+                        <Alert className="lesson-info"
+                               message={`Instructor: ${this.state.lesson.instructor.name}`}/>
+                        <Alert className="lesson-info"
+                               message={`Date: ${this.state.lesson.date}`}/>
+                        <Alert className="lesson-info"
+                               message={`Level: ${this.state.lesson.lessonLevel}`}/>
+                    </div>
+                    <Table className="reservations-table"
+                           dataSource={this.state.lesson.reservations}
+                           columns={reservationColumns}
+                           rowKey='id'
+                           rowClassName="lesson-row"
+                        // scroll={{ x: '100%', y: '100%' }}
+                        // pagination={false}
+                    />
 
-        return (
+                </div>);
+        } else return (
             <div className="lesson-container">
-
+                <div className="flex-alert">
+                    <Alert className="lesson-info"
+                           message={`Instructor: ${this.state.lesson.instructor.name}`}/>
+                    <Alert className="lesson-info"
+                           message={`Date: ${this.state.lesson.date}`}/>
+                    <Alert className="lesson-info"
+                           message={`Level: ${this.state.lesson.lessonLevel}`}/>
+                </div>
                 <Table className="reservations-table"
                        dataSource={this.state.lesson.reservations}
                        columns={reservationColumns}
@@ -90,7 +118,7 @@ class Lesson extends Component {
                     // pagination={false}
                 />
 
-            </div>);
+            </div>)
     }
 }
 

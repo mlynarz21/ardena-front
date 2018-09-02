@@ -10,6 +10,7 @@ import horseIcon from '../horse.svg';
 import scheduleIcon from '../schedule.svg';
 import myRidesIcon from '../myRides.svg';
 import { Layout, Menu, Dropdown} from 'antd';
+import {ACCESS_TOKEN, isInstructor} from "../constants";
 const Header = Layout.Header;
     
 class AppHeader extends Component {
@@ -27,38 +28,63 @@ class AppHeader extends Component {
     render() {
         let menuItems;
         if (this.props.currentUser) {
-            menuItems = [
-                //<Menu.Item key="/poll/new">
-                //    <Link to="/poll/new">
-                //        <img src={pollIcon} alt="poll" className="poll-icon"/>
-                //    </Link>
-                //</Menu.Item>,
-                <Menu.Item key="/">
-                    <Link to="/">
-                        <img src={homeIcon} alt="home" className="home-icon"/>
-                    </Link>
-                </Menu.Item>,
-                <Menu.Item key="/lessons">
-                    <Link to="/lessons">
-                        <img src={myRidesIcon} alt="myRides" className="myRides-icon"/>
-                    </Link>
-                </Menu.Item>,
-                <Menu.Item key="/schedule">
-                    <Link to="/schedule">
-                        <img src={scheduleIcon} alt="schedule" className="schedule-icon"/>
-                    </Link>
-                </Menu.Item>,
-                <Menu.Item key="/horses">
-                    <Link to="/horses">
-                        <img src={horseIcon} alt="horse" className="horse-icon"/>
-                    </Link>
-                </Menu.Item>,
-                <Menu.Item key="/profile" className="profile-menu">
-                    <ProfileDropdownMenu
-                        currentUser={this.props.currentUser}
-                        handleMenuClick={this.handleMenuClick}/>
-                </Menu.Item>
-            ];
+            if (localStorage.getItem(isInstructor)==='true') {
+                menuItems = [
+                    //<Menu.Item key="/poll/new">
+                    //    <Link to="/poll/new">
+                    //        <img src={pollIcon} alt="poll" className="poll-icon"/>
+                    //    </Link>
+                    //</Menu.Item>,
+                    <Menu.Item key="/">
+                        <Link to="/">
+                            <img src={homeIcon} alt="home" className="home-icon"/>
+                        </Link>
+                    </Menu.Item>,
+                    <Menu.Item key="/lessons">
+                        <Link to="/lessons">
+                            <img src={myRidesIcon} alt="myRides" className="myRides-icon"/>
+                        </Link>
+                    </Menu.Item>,
+                    <Menu.Item key="/schedule">
+                        <Link to="/schedule">
+                            <img src={scheduleIcon} alt="schedule" className="schedule-icon"/>
+                        </Link>
+                    </Menu.Item>,
+                    <Menu.Item key="/horses">
+                        <Link to="/horses">
+                            <img src={horseIcon} alt="horse" className="horse-icon"/>
+                        </Link>
+                    </Menu.Item>,
+                    <Menu.Item key="/profile" className="profile-menu">
+                        <ProfileDropdownMenu
+                            currentUser={this.props.currentUser}
+                            handleMenuClick={this.handleMenuClick}/>
+                    </Menu.Item>
+                ];
+            } else {
+                menuItems = [
+                    //<Menu.Item key="/poll/new">
+                    //    <Link to="/poll/new">
+                    //        <img src={pollIcon} alt="poll" className="poll-icon"/>
+                    //    </Link>
+                    //</Menu.Item>,
+                    <Menu.Item key="/">
+                        <Link to="/">
+                            <img src={homeIcon} alt="home" className="home-icon"/>
+                        </Link>
+                    </Menu.Item>,
+                    <Menu.Item key="/lessons">
+                        <Link to="/lessons">
+                            <img src={myRidesIcon} alt="myRides" className="myRides-icon"/>
+                        </Link>
+                    </Menu.Item>,
+                    <Menu.Item key="/profile" className="profile-menu">
+                        <ProfileDropdownMenu
+                            currentUser={this.props.currentUser}
+                            handleMenuClick={this.handleMenuClick}/>
+                    </Menu.Item>
+                ];
+            }
         } else {
             menuItems = [
                 <Menu.Item key="/login">

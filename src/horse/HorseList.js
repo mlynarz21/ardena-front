@@ -14,7 +14,8 @@ class HorseList extends Component {
         this.state = {
             isLoading: true,
             horseArray: [],
-            visible: false
+            visible: false,
+            buttonClass : ""
         }
     }
 
@@ -152,7 +153,7 @@ class HorseList extends Component {
                 />
 
                 <Button type="primary"
-                        className="add-horse-button"
+                        className={this.state.horseArray.length>0 ? 'add-horse-button' : 'add-horse-button-no-data'}
                         onClick={this.showModal}>
                     Add horse</Button>
 

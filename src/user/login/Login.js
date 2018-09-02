@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { login } from '../../util/APIUtils';
 import './Login.css';
 import { Link } from 'react-router-dom';
-import { ACCESS_TOKEN } from '../../constants';
+import { isInstructor, ACCESS_TOKEN } from '../../constants';
 
 import { Form, Input, Button, Icon, notification } from 'antd';
 const FormItem = Form.Item;
@@ -35,6 +35,9 @@ class LoginForm extends Component {
                 login(loginRequest)
                 .then(response => {
                     localStorage.setItem(ACCESS_TOKEN, response.accessToken);
+                    localStorage.setItem(isInstructor, response.roles.map(role => role.name).includes('ROLE_INSTRUCTOR'));
+                    console.log(response.roles.map(role => role.name).includes('ROLE_INSTRUCTOR'));
+                    console.log(localStorage.getItem(isInstructor));
                     this.props.onLogin();
                 }).catch(error => {
                     if(error.status === 401) {

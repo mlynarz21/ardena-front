@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 
 import { getCurrentUser } from '../util/APIUtils';
-import { ACCESS_TOKEN } from '../constants';
+import { isInstructor,ACCESS_TOKEN } from '../constants';
 
 import PollList from '../poll/PollList';
 import NewPoll from '../poll/NewPoll';
@@ -33,7 +33,6 @@ class App extends Component {
             currentUser: null,
             isAuthenticated: false,
             isLoading: false,
-            roles: []
         }
         this.handleLogout = this.handleLogout.bind(this);
         this.loadCurrentUser = this.loadCurrentUser.bind(this);
@@ -70,6 +69,7 @@ class App extends Component {
 
     handleLogout(redirectTo = "/", notificationType = "success", description = "You're successfully logged out.") {
         localStorage.removeItem(ACCESS_TOKEN);
+        localStorage.removeItem(isInstructor);
 
         this.setState({
             currentUser: null,
