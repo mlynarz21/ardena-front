@@ -21,7 +21,7 @@ class Schedule extends Component {
         super(props);
         this.state = {
             isLoading: true,
-            value: moment(),
+            value: moment().subtract(1, 'd'),
             selectedValue: "",
             lessonArray: [],
             pendingReservationArray: [],
@@ -88,7 +88,7 @@ class Schedule extends Component {
     };
 
     disabledDate = (value) => {
-        return value.valueOf() <= moment();
+        return value.valueOf() <= moment().subtract(1, 'd');
     };
 
     confirmCancel(reservationId) {
@@ -243,9 +243,12 @@ class Schedule extends Component {
             width: '25%'
         }, {
             title: 'Rider name',
-            dataIndex: 'rider.name',
             key: 'name',
-            width: '20%'
+            width: '20%',
+            render: (text, record) => (
+                <Link className="user-link" to={`/users/${record.rider.username}`}>
+                    <a>{record.rider.name}</a>
+                </Link>)
         }, {
             title: 'Action',
             key: 'action',

@@ -6,6 +6,8 @@ import NotFound from '../common/NotFound';
 import ServerError from '../common/ServerError';
 import {getLesson} from "../util/APIUtils";
 import {isInstructor} from "../constants";
+import withRouter from "react-router-dom/es/withRouter";
+import {Link} from "react-router-dom";
 
 const TabPane = Tabs.TabPane;
 
@@ -60,9 +62,12 @@ class Lesson extends Component {
             width: '25%'
         }, {
             title: 'Rider Name',
-            dataIndex: 'rider.name',
             key: 'rider',
-            width: '25%'
+            width: '25%',
+            render: (text, record) => (
+                <Link className="user-link" to={`/users/${record.rider.username}`}>
+                    <a>{record.rider.name}</a>
+                </Link>)
         }, {
             title: 'Horse',
             dataIndex: 'horse',
@@ -78,12 +83,15 @@ class Lesson extends Component {
                     <a>Reserve</a>
                 </Popconfirm>)
         }];
+
         if (localStorage.getItem(isInstructor) === 'true') {
             return (
                 <div className="lesson-container">
                     <div className="flex-alert">
-                        <Alert className="lesson-info"
-                               message={`Instructor: ${this.state.lesson.instructor.name}`}/>
+                        <Link className="user-link" to={`/users/${this.state.lesson.instructor.username}`}>
+                            <Alert className="lesson-info"
+                                   message={`Instructor: ${this.state.lesson.instructor.name}`}/>
+                        </Link>
                         <Alert className="lesson-info"
                                message={`Date: ${this.state.lesson.date}`}/>
                         <Alert className="lesson-info"
@@ -102,8 +110,10 @@ class Lesson extends Component {
         } else return (
             <div className="lesson-container">
                 <div className="flex-alert">
-                    <Alert className="lesson-info"
-                           message={`Instructor: ${this.state.lesson.instructor.name}`}/>
+                    <Link className="user-link" to={`/users/${this.state.lesson.instructor.username}`}>
+                        <Alert className="lesson-info"
+                               message={`Instructor: ${this.state.lesson.instructor.name}`}/>
+                    </Link>
                     <Alert className="lesson-info"
                            message={`Date: ${this.state.lesson.date}`}/>
                     <Alert className="lesson-info"
@@ -122,4 +132,4 @@ class Lesson extends Component {
     }
 }
 
-export default Lesson;
+export default withRouter(Lesson);

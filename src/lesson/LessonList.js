@@ -6,7 +6,7 @@ import NotFound from '../common/NotFound';
 import ServerError from '../common/ServerError';
 import * as moment from "moment";
 import {
-    addReservation, cancelReservation, getLessonsByDateAndUser,
+    addReservation, cancelReservation, getAllHorses, getInstructors, getLessonsByDateAndUser, getUserReservationHistory,
     getUserReservations
 } from "../util/APIUtils";
 import {notification} from "antd/lib/index";
@@ -19,16 +19,22 @@ class LessonList extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            value: moment().subtract(1, 'd'),
             isLoading: true,
-            value: moment(),
             selectedValue: "",
             lessonArray: [],
-            reservationArray: []
+            reservationArray: [],
+            reservationHistoryArray: [],
+            horseArray: [],
+            instructorArray: []
         }
     }
 
     componentDidMount() {
         this.loadReservationArray();
+        this.loadHistoryArray();
+        this.loadHorseArray();
+        this.loadInstructorArray();
     }
 
     loadLessonArray(date) {
@@ -53,6 +59,39 @@ class LessonList extends Component {
         })
     }
 
+    loadHistoryArray() {
+        getUserReservationHistory().then(response => {
+            this.setState(
+                {
+                    isLoading: false,
+                    reservationHistoryArray: response
+                }
+            )
+        })
+    }
+
+    loadHorseArray() {
+        getAllHorses().then(response => {
+            this.setState(
+                {
+                    isLoading: false,
+                    horseArray: response
+                }
+            )
+        })
+    }
+
+    loadInstructorArray() {
+        getInstructors().then(response => {
+            this.setState(
+                {
+                    isLoading: false,
+                    instructorArray: response
+                }
+            )
+        })
+    }
+
     onSelect = (value) => {
         this.setState({
             value: value,
@@ -66,7 +105,7 @@ class LessonList extends Component {
     };
 
     disabledDate = (value) => {
-        return value.valueOf() <= moment();
+        return value.valueOf() <= moment().subtract(1, 'd');
     };
 
     confirm(lessonId) {
@@ -94,12 +133,19 @@ class LessonList extends Component {
             });
             this.props.history.push("/lessons");
             this.loadReservationArray();
+            this.loadLessonArray({date: this.state.selectedValue + ' 00:00'});
         }).catch(error => {
             notification.error({
                 message: 'Ardena',
                 description: error.message || 'Sorry! Something went wrong. Please try again!'
             });
         })
+    }
+
+    getCancelText(recordState){
+        if(recordState!=='Cancelled')
+            return "Cancel";
+        else return ""
     }
 
     render() {
@@ -140,9 +186,12 @@ class LessonList extends Component {
             width: '25%'
         }, {
             title: 'Instructor',
-            dataIndex: 'instructor.name',
             key: 'instructor',
-            width: '30%'
+            width: '30%',
+            render: (text, record) => (
+                <Link className="user-link" to={`/users/${record.instructor.username}`}>
+                    <a>{record.instructor.name}</a>
+                </Link>)
         }, {
             title: 'Action',
             key: 'action',
@@ -177,9 +226,12 @@ class LessonList extends Component {
             width: '20%'
         }, {
             title: 'Instructor',
-            dataIndex: 'lesson.instructor.name',
             key: 'instructor',
-            width: '20%'
+            width: '20%',
+            render: (text, record) => (
+                <Link className="user-link" to={`/users/${record.lesson.instructor.username}`}>
+                    <a>{record.lesson.instructor.name}</a>
+                </Link>)
         }, {
             title: 'Horse',
             dataIndex: 'horse.horseName',
@@ -199,8 +251,73 @@ class LessonList extends Component {
                     this.cancelLesson(record.id)
                 }}
                             okText="Yes" cancelText="No">
-                    <a>Cancel</a>
+                    <a>{this.getCancelText(record.status)}</a>
                 </Popconfirm>)
+        }];
+
+        const reservationHistoryColumns = [{
+            title: 'Id',
+            dataIndex: 'id',
+            key: 'id',
+            width: '10%',
+            render: (text, record) => (
+                <Link className="lesson-link" to={`/lessons/${record.lesson.id}`}>
+                    <a>{record.id}</a>
+                </Link>)
+        }, {
+            title: 'Level',
+            dataIndex: 'lesson.lessonLevel',
+            key: 'lessonLevel',
+            width: '15%',
+            filters: [
+                { text: 'Basic', value: 'Basic' },
+                { text: 'Medium', value: 'Medium' },
+                { text: 'Advanced', value: 'Advanced' },
+                { text: 'Sport', value: 'Sport' },
+            ],
+            onFilter: (value, record) => record.lesson.lessonLevel.indexOf(value) === 0
+        }, {
+            title: 'Date',
+            dataIndex: 'lesson.date',
+            key: 'date',
+            width: '20%',
+            sorter: (a, b) => moment(a.lesson.date, 'YYYY-MM-DD HH:mm').valueOf()-moment(b.lesson.date, 'YYYY-MM-DD HH:mm').valueOf()
+        }, {
+            title: 'Instructor',
+            key: 'instructor',
+            width: '25%',
+            render: (text, record) => (
+                <Link className="user-link" to={`/users/${record.lesson.instructor.username}`}>
+                    <a>{record.lesson.instructor.name}</a>
+                </Link>),
+            filters:
+                this.state.instructorArray.map(element => {
+                    return { text: element.name, value: element.name }
+                }),
+            onFilter: (value, record) => record.lesson.instructor.name.indexOf(value===null? "": value) === 0
+        }, {
+            title: 'Horse',
+            dataIndex: 'horse.horseName',
+            key: 'horse',
+            width: '15%',
+            filters:
+                this.state.horseArray.map(element => {
+                    return { text: element.horseName, value: element.horseName }
+                }),
+            onFilter: (value, record) => record.horse === null ? false: record.horse.horseName.indexOf(value===null? "": value) === 0
+        }, {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            width: '15%',
+            filters: [
+                { text: 'Cancelled', value: 'Cancelled' },
+                { text: 'Pending', value: 'Pending' },
+                { text: 'Confirmed', value: 'Confirmed' },
+                { text: 'Paid_pass', value: 'Paid_pass' },
+                { text: 'Paid_cash', value: 'Paid_cash' },
+            ],
+            onFilter: (value, record) => record.status.indexOf(value) === 0
         }];
 
         return (
@@ -245,6 +362,17 @@ class LessonList extends Component {
                                     // scroll={{ x: '100%', y: '100%' }}
                                     // pagination={false}
                                 />
+                        </TabPane>
+
+                        <TabPane tab={`My History`} key="3">
+                            <Table className="reservation-history-table"
+                                   dataSource={this.state.reservationHistoryArray}
+                                   columns={reservationHistoryColumns}
+                                   rowKey='id'
+                                   rowClassName="lesson-row"
+                                // scroll={{ x: '100%', y: '100%' }}
+                                // pagination={false}
+                            />
                         </TabPane>
 
                     </Tabs>

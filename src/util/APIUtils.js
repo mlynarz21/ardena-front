@@ -64,6 +64,22 @@ export function getUserReservations() {
     });
 }
 
+export function getUserReservationHistory() {
+
+    return request({
+        url: API_BASE_URL + "/reservations/history/user",
+        method: 'GET'
+    });
+}
+
+export function getInstructors() {
+
+    return request({
+        url: API_BASE_URL + "/users/instructors",
+        method: 'GET'
+    });
+}
+
 export function getLessonsByDate(lessonData) {
 
     return request({
