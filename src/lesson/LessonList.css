@@ -14,7 +14,7 @@
     margin: 10px;
 }
 
-.reservation-table, .reservation-history-table{
+.reservation-table, .reservation-history-table, .pending-payments-table{
     margin: 30px;
 }
 

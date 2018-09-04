@@ -6,7 +6,8 @@ import NotFound from '../common/NotFound';
 import ServerError from '../common/ServerError';
 import * as moment from "moment";
 import {
-    addReservation, cancelReservation, getAllHorses, getInstructors, getLessonsByDateAndUser, getUserReservationHistory,
+    addReservation, cancelReservation, getAllHorses, getInstructors, getLessonsByDateAndUser,
+    getUnpaidReservationsByUser, getUserReservationHistory,
     getUserReservations
 } from "../util/APIUtils";
 import {notification} from "antd/lib/index";
@@ -26,7 +27,8 @@ class LessonList extends Component {
             reservationArray: [],
             reservationHistoryArray: [],
             horseArray: [],
-            instructorArray: []
+            instructorArray: [],
+            pendingPaymentArray: []
         }
     }
 
@@ -35,6 +37,7 @@ class LessonList extends Component {
         this.loadHistoryArray();
         this.loadHorseArray();
         this.loadInstructorArray();
+        this.loadPendingPaymentArray();
     }
 
     loadLessonArray(date) {
@@ -65,6 +68,17 @@ class LessonList extends Component {
                 {
                     isLoading: false,
                     reservationHistoryArray: response
+                }
+            )
+        })
+    }
+
+    loadPendingPaymentArray() {
+        getUnpaidReservationsByUser().then(response => {
+            this.setState(
+                {
+                    isLoading: false,
+                    pendingPaymentArray: response
                 }
             )
         })
@@ -320,6 +334,46 @@ class LessonList extends Component {
             onFilter: (value, record) => record.status.indexOf(value) === 0
         }];
 
+        const pendingPaymentColumns = [{
+            title: 'Id',
+            dataIndex: 'id',
+            key: 'id',
+            width: '15%',
+            render: (text, record) => (
+                <Link className="lesson-link" to={`/lessons/${record.lesson.id}`}>
+                    <a>{record.id}</a>
+                </Link>)
+        }, {
+            title: 'Level',
+            dataIndex: 'lesson.lessonLevel',
+            key: 'lessonLevel',
+            width: '15%'
+        }, {
+            title: 'Date',
+            dataIndex: 'lesson.date',
+            key: 'date',
+            width: '20%'
+        }, {
+            title: 'Instructor',
+            key: 'instructor',
+            width: '25%',
+            render: (text, record) => (
+                <Link className="user-link" to={`/users/${record.lesson.instructor.username}`}>
+                    <a>{record.lesson.instructor.name}</a>
+                </Link>)
+        }, {
+            title: 'Action',
+            key: 'action',
+            width: '25%',
+            render: (text, record) => (
+                <Popconfirm placement="left" title="Want to pay for this lesson? (pass)" onConfirm={() => {
+                    console.log("paid with pass")
+                }}
+                            okText="Yes" cancelText="No">
+                    <a>Pay with pass</a>
+                </Popconfirm>)
+        }];
+
         return (
             <div className="lesson-list">
                 <div className="tab-panel">
@@ -368,6 +422,17 @@ class LessonList extends Component {
                             <Table className="reservation-history-table"
                                    dataSource={this.state.reservationHistoryArray}
                                    columns={reservationHistoryColumns}
+                                   rowKey='id'
+                                   rowClassName="lesson-row"
+                                // scroll={{ x: '100%', y: '100%' }}
+                                // pagination={false}
+                            />
+                        </TabPane>
+
+                        <TabPane tab={`Pending payments`} key="4">
+                            <Table className="pending-payments-table"
+                                   dataSource={this.state.pendingPaymentArray}
+                                   columns={pendingPaymentColumns}
                                    rowKey='id'
                                    rowClassName="lesson-row"
                                 // scroll={{ x: '100%', y: '100%' }}

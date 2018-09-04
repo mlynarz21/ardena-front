@@ -67,7 +67,7 @@ export function getUserReservations() {
 export function getUserReservationHistory() {
 
     return request({
-        url: API_BASE_URL + "/reservations/history/user",
+        url: API_BASE_URL + "/reservations/user/history",
         method: 'GET'
     });
 }
@@ -80,12 +80,46 @@ export function getInstructors() {
     });
 }
 
+export function getAllUsers() {
+
+    return request({
+        url: API_BASE_URL + "/users",
+        method: 'GET'
+    });
+}
+
+export function getAdmins() {
+
+    return request({
+        url: API_BASE_URL + "/users/admins",
+        method: 'GET'
+    });
+}
+
 export function getLessonsByDate(lessonData) {
 
     return request({
         url: API_BASE_URL + "/lessons/date",
         method: 'POST',
         body: JSON.stringify(lessonData)
+    });
+}
+
+export function addUserRole(username,roleData) {
+
+    return request({
+        url: API_BASE_URL + "/users/role/add/"+username,
+        method: 'PATCH',
+        body: JSON.stringify(roleData)
+    });
+}
+
+export function removeUserRole(userId,roleData) {
+
+    return request({
+        url: API_BASE_URL + "/users/role/remove/"+userId,
+        method: 'PATCH',
+        body: JSON.stringify(roleData)
     });
 }
 
@@ -113,6 +147,23 @@ export function getPendingReservationsByInstructor() {
         method: 'GET',
     });
 }
+
+export function getUnpaidReservationsByInstructor() {
+
+    return request({
+        url: API_BASE_URL + "/reservations/instructor/unpaid",
+        method: 'GET',
+    });
+}
+
+export function getUnpaidReservationsByUser() {
+
+    return request({
+        url: API_BASE_URL + "/reservations/user/unpaid",
+        method: 'GET',
+    });
+}
+
 
 export function getLessonsByDateAndInstructor(lessonData) {
 

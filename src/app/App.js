@@ -24,6 +24,7 @@ import LessonList from '../lesson/LessonList';
 import { Layout, notification } from 'antd';
 import Schedule from "../lesson/Schedule";
 import Lesson from "../lesson/Lesson";
+import Admin from "../admin/Admin";
 const { Content } = Layout;
 
 class App extends Component {
@@ -112,6 +113,7 @@ class App extends Component {
                                                                 handleLogout={this.handleLogout} {...props} />}>
                             </Route>
                             <Route authenticated={this.state.isAuthenticated} path="/horses" component={HorseList}></Route>
+                            <Route authenticated={this.state.isAuthenticated} path="/admin" component={Admin}></Route>
                             <Route authenticated={this.state.isAuthenticated} path="/lessons/:lessonId" component={Lesson}></Route>
                             <Route authenticated={this.state.isAuthenticated} path="/lessons" component={LessonList}></Route>
                             <Route authenticated={this.state.isAuthenticated} path="/schedule" component={Schedule}></Route>

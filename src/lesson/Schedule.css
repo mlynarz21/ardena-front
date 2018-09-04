@@ -14,7 +14,7 @@
     margin: 10px;
 }
 
-.reservation-table{
+.reservation-table, .pending-payments-table{
     margin: 30px;
 }
 
@@ -25,7 +25,7 @@
     visibility: hidden;
 }
 
-.add-lesson-button{
+.add-lesson-button, .add-lesson-button{
     float: left;
     margin: 0 auto;
     margin-top: -50px;
@@ -35,6 +35,26 @@
     margin-top: -20px;
 }
 
-.add-lesson-button-no-data{
+.add-lesson-button-no-data, .add-lesson-button-no-data{
     margin-top: 14px;
+}
+
+.custom-filter-dropdown {
+    padding: 8px;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, .2);
+}
+
+.custom-filter-dropdown input {
+    width: 130px;
+    margin-right: 8px;
+}
+
+.custom-filter-dropdown button {
+    margin-right: 8px;
+}
+
+.highlight {
+    color: #f50;
 }

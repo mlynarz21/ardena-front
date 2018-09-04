@@ -1,18 +1,14 @@
-.horse-table {
+.admin-table, .instructor-table{
     margin: 0 auto;
     margin-top: 30px;
 }
 
-.add-horse-button{
+.add-privileges-button{
     float: left;
     margin: 0 auto;
     margin-top: -50px;
 }
 
-.add-horse-button-no-data{
+.add-privileges-button-no-data{
     margin-top: 14px;
 }
-
-.ant-table td { white-space: nowrap; }
-
-

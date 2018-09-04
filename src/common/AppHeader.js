@@ -7,10 +7,11 @@ import './AppHeader.css';
 import userIcon from '../user.svg';
 import homeIcon from '../home.svg';
 import horseIcon from '../horse.svg';
+import adminIcon from '../admin.svg';
 import scheduleIcon from '../schedule.svg';
 import myRidesIcon from '../myRides.svg';
 import { Layout, Menu, Dropdown} from 'antd';
-import {ACCESS_TOKEN, isInstructor} from "../constants";
+import {isInstructor} from "../constants";
 const Header = Layout.Header;
     
 class AppHeader extends Component {
@@ -53,6 +54,11 @@ class AppHeader extends Component {
                     <Menu.Item key="/horses">
                         <Link to="/horses">
                             <img src={horseIcon} alt="horse" className="horse-icon"/>
+                        </Link>
+                    </Menu.Item>,
+                    <Menu.Item key="/admin">
+                        <Link to="/admin">
+                            <img src={adminIcon} alt="admin" className="admin-icon"/>
                         </Link>
                     </Menu.Item>,
                     <Menu.Item key="/profile" className="profile-menu">

@@ -3,8 +3,8 @@ import LoadingIndicator  from '../common/LoadingIndicator';
 import './HorseList.css';
 import NotFound from '../common/NotFound';
 import ServerError from '../common/ServerError';
-import {addHorse, getAllHorses, deleteHorse } from '../util/APIUtils';
-import {Button, Modal, Table } from 'antd';
+import {addHorse, getAllHorses, deleteHorse} from '../util/APIUtils';
+import {Popconfirm, Button, Modal, Table } from 'antd';
 import {notification} from "antd/lib/index";
 import AddHorseForm from "./AddHorseForm";
 
@@ -31,6 +31,22 @@ class HorseList extends Component {
                     horseArray: response
                 }
             )
+        })
+    }
+
+    delete(horseId) {
+        deleteHorse(horseId).then(response => {
+            notification.success({
+                message: 'Ardena',
+                description: response.message,
+            });
+            this.props.history.push("/horses");
+            this.loadHorseArray()
+        }).catch(error => {
+            notification.error({
+                message: 'Ardena',
+                description: error.message || 'Sorry! Something went wrong. Please try again!'
+            });
         })
     }
 
@@ -77,8 +93,6 @@ class HorseList extends Component {
 
     render() {
 
-        const confirm = Modal.confirm;
-
         if (this.state.isLoading) {
             return <LoadingIndicator/>;
         }
@@ -104,32 +118,13 @@ class HorseList extends Component {
             title: 'Action',
             key: 'action',
             width: '25%',
-            render: (text, record) => (<span onClick={
-                () =>
-                    confirm({
-                        title: 'Do you want to delete this object?',
-                        content: record.horseName,
-                        onOk: () => {
-                            deleteHorse(record.id).then(response => {
-                                notification.success({
-                                    message: 'Ardena',
-                                    description: response.message,
-                                });
-                                this.props.history.push("/horses");
-                                this.loadHorseArray()
-                            }).catch(error => {
-                                notification.error({
-                                    message: 'Ardena',
-                                    description: error.message || 'Sorry! Something went wrong. Please try again!'
-                                });
-                            })
-                        },
-                        onCancel() {
-                            console.log('Cancel');
-                        },
-                    })
-            }>
-                <a>Delete</a> </span>)
+            render: (text, record) => (
+                <Popconfirm placement="left" title="Want to delete this horse?" onConfirm={() => {
+                    this.delete(record.id)
+                }}
+                            okText="Yes" cancelText="No">
+                    <a>Delete</a>
+                </Popconfirm>)
         }];
 
         return (

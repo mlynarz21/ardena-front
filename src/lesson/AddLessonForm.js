@@ -1,6 +1,5 @@
 import { Select, DatePicker, TimePicker, Modal, Form} from 'antd';
 import * as React from "react";
-import * as moment from "moment/moment";
 
 const FormItem = Form.Item;
 const Option = Select.Option;
