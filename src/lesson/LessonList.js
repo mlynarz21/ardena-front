@@ -8,7 +8,7 @@ import * as moment from "moment";
 import {
     addReservation, cancelReservation, getAllHorses, getInstructors, getLessonsByDateAndUser,
     getUnpaidReservationsByUser, getUserReservationHistory,
-    getUserReservations
+    getUserReservations, payForReservation
 } from "../util/APIUtils";
 import {notification} from "antd/lib/index";
 import {Link, withRouter} from 'react-router-dom';
@@ -156,7 +156,24 @@ class LessonList extends Component {
         })
     }
 
-    getCancelText(recordState){
+    payReservation(reservationId, data){
+        payForReservation(reservationId, data).then(response => {
+            notification.success({
+                message: 'Ardena',
+                description: response.message,
+            });
+            this.props.history.push("/lessons");
+            this.loadPendingPaymentArray();
+            this.loadHistoryArray();
+        }).catch(error => {
+            notification.error({
+                message: 'Ardena',
+                description: error.message || 'Sorry! Something went wrong. Please try again!'
+            });
+        })
+    }
+
+    static getCancelText(recordState){
         if(recordState!=='Cancelled')
             return "Cancel";
         else return ""
@@ -265,7 +282,7 @@ class LessonList extends Component {
                     this.cancelLesson(record.id)
                 }}
                             okText="Yes" cancelText="No">
-                    <a>{this.getCancelText(record.status)}</a>
+                    <a>{LessonList.getCancelText(record.status)}</a>
                 </Popconfirm>)
         }];
 
@@ -367,7 +384,7 @@ class LessonList extends Component {
             width: '25%',
             render: (text, record) => (
                 <Popconfirm placement="left" title="Want to pay for this lesson? (pass)" onConfirm={() => {
-                    console.log("paid with pass")
+                    this.payReservation(record.id,{status: "Paid_pass"});
                 }}
                             okText="Yes" cancelText="No">
                     <a>Pay with pass</a>

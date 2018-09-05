@@ -8,6 +8,7 @@ import LoadingIndicator  from '../../common/LoadingIndicator';
 import './Profile.css';
 import NotFound from '../../common/NotFound';
 import ServerError from '../../common/ServerError';
+import Pass from "../../pass/Pass";
 
 const TabPane = Tabs.TabPane;
 
@@ -108,6 +109,9 @@ class Profile extends Component {
                                     </TabPane>
                                     <TabPane tab={`${this.state.user.voteCount} Votes`}  key="2">
                                         <PollList username={this.props.match.params.username} type="USER_VOTED_POLLS" />
+                                    </TabPane>
+                                    <TabPane tab={"Passes"}  key="3">
+                                        <Pass></Pass>
                                     </TabPane>
                                 </Tabs>
                             </div>  

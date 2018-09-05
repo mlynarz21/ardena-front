@@ -81,7 +81,9 @@ class Admin extends Component {
     };
 
     handleCancel = () => {
+        const form = this.formRef.props.form;
         this.setState({visible: false});
+        form.resetFields();
     };
 
     getPrivilageRequest = () => {
@@ -162,15 +164,15 @@ class Admin extends Component {
             title: 'Id',
             key: 'id',
             width: '20%',
-            render: (text, record) => (
-                <Link className="user.id" to={`/users/${record.id}`}>
-                    <a>{record.id}</a>
-                </Link>)
+            dataIndex: "id"
         }, {
             title: 'name',
-            dataIndex: 'name',
             key: 'name',
-            width: '30%'
+            width: '30%',
+            render: (text, record) => (
+                <Link className="user-link" to={`/users/${record.username}`}>
+                    <a>{record.name}</a>
+                </Link>)
         }, {
             title: 'username',
             dataIndex: 'username',
@@ -193,15 +195,15 @@ class Admin extends Component {
             title: 'Id',
             key: 'id',
             width: '20%',
-            render: (text, record) => (
-                <Link className="user.id" to={`/users/${record.id}`}>
-                    <a>{record.id}</a>
-                </Link>)
+            dataIndex: "id"
         }, {
             title: 'name',
-            dataIndex: 'name',
             key: 'name',
-            width: '30%'
+            width: '30%',
+            render: (text, record) => (
+                <Link className="user-link" to={`/users/${record.username}`}>
+                    <a>{record.name}</a>
+                </Link>)
         }, {
             title: 'username',
             dataIndex: 'username',

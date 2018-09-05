@@ -4,12 +4,11 @@ import {Alert, Divider, Popconfirm, Table} from 'antd';
 import LoadingIndicator  from '../common/LoadingIndicator';
 import NotFound from '../common/NotFound';
 import ServerError from '../common/ServerError';
-import {acceptReservation, cancelReservation, deleteLesson, getLesson} from "../util/APIUtils";
+import {acceptReservation, cancelReservation, deleteLesson, getLesson, payForReservation} from "../util/APIUtils";
 import {isInstructor} from "../constants";
 import withRouter from "react-router-dom/es/withRouter";
 import {Link} from "react-router-dom";
 import {notification} from "antd/lib/index";
-import * as moment from "moment/moment";
 
 class Lesson extends Component {
 
@@ -69,7 +68,6 @@ class Lesson extends Component {
 
     renderPopconfirm(record) {
         if (record.status === "Pending") {
-            <Divider type="vertical"/>
             return (
                 <div>
                     <Popconfirm placement="left" title="Want to accept this reservation?" onConfirm={() => {
@@ -97,20 +95,35 @@ class Lesson extends Component {
                 </Popconfirm>
                 <Divider type="vertical"/>
                 <Popconfirm placement="left" title="Want to pay for this lesson? (pass)" onConfirm={() => {
-                    console.log("paid with pass")
+                    this.payReservation(record.id,{status: "Paid_pass"});
                 }}
                             okText="Yes" cancelText="No">
                     <a>Pay with pass</a>
                 </Popconfirm>
                 <Divider type="vertical"/>
                 <Popconfirm placement="left" title="Want to pay for this lesson? (cash)" onConfirm={() => {
-                    console.log("paid with pass")
+                    this.payReservation(record.id,{status: "Paid_cash"});
                 }}
                             okText="Yes" cancelText="No">
                     <a>Pay with cash</a>
                 </Popconfirm>
             </div>)
         }
+    }
+
+    payReservation(reservationId, data){
+        payForReservation(reservationId, data).then(response => {
+            notification.success({
+                message: 'Ardena',
+                description: response.message,
+            });
+            this.loadLesson(this.props.match.params.lessonId);
+        }).catch(error => {
+            notification.error({
+                message: 'Ardena',
+                description: error.message || 'Sorry! Something went wrong. Please try again!'
+            });
+        })
     }
 
     render() {

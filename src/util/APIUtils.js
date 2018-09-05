@@ -174,6 +174,14 @@ export function getLessonsByDateAndInstructor(lessonData) {
     });
 }
 
+export function getPass() {
+
+    return request({
+        url: API_BASE_URL + "/passes/user",
+        method: 'GET',
+    });
+}
+
 export function createPoll(pollData) {
     return request({
         url: API_BASE_URL + "/polls",
@@ -231,6 +239,22 @@ export function castVote(voteData) {
         url: API_BASE_URL + "/polls/" + voteData.pollId + "/votes",
         method: 'POST',
         body: JSON.stringify(voteData)
+    });
+}
+
+export function addPass(userId, data) {
+    return request({
+        url: API_BASE_URL + "/passes/"+ userId,
+        method: 'POST',
+        body: JSON.stringify(data)
+    });
+}
+
+export function payForReservation(reservationId, paymentType) {
+    return request({
+        url: API_BASE_URL + "/reservations/pay/" + reservationId,
+        method: 'PATCH',
+        body: JSON.stringify(paymentType)
     });
 }
 

@@ -55,7 +55,9 @@ class HorseList extends Component {
     };
 
     handleCancel = () => {
+        const form = this.formRef.props.form;
         this.setState({visible: false});
+        form.resetFields();
     };
 
     handleCreate = () => {

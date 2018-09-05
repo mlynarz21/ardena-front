@@ -6,10 +6,10 @@ import NotFound from '../common/NotFound';
 import ServerError from '../common/ServerError';
 import * as moment from "moment";
 import {
-    acceptReservation, addLesson, cancelReservation,
+    acceptReservation, addLesson, addPass, cancelReservation,
     deleteLesson, getAllUsers, getLessonsByDateAndInstructor, getLessonsByInstructor,
     getPendingReservationsByInstructor,
-    getUnpaidReservationsByInstructor
+    getUnpaidReservationsByInstructor, payForReservation
 } from "../util/APIUtils";
 import {notification} from "antd/lib/index";
 import AddLessonForm from "./AddLessonForm";
@@ -101,7 +101,9 @@ class Schedule extends Component {
     };
 
     handleCancel = () => {
+        const form = this.formRef.props.form;
         this.setState({visible: false});
+        form.resetFields();
     };
 
     onSelect = (value) => {
@@ -166,6 +168,36 @@ class Schedule extends Component {
                 description: error.message || 'Sorry! Something went wrong. Please try again!'
             });
         });
+    }
+
+    payReservation(reservationId, data){
+        payForReservation(reservationId, data).then(response => {
+            notification.success({
+                message: 'Ardena',
+                description: response.message,
+            });
+            this.loadPendingPaymentArray();
+        }).catch(error => {
+            notification.error({
+                message: 'Ardena',
+                description: error.message || 'Sorry! Something went wrong. Please try again!'
+            });
+        })
+    }
+
+    addPassToUser(userId, data){
+        addPass(userId, data).then(response => {
+            notification.success({
+                message: 'Ardena',
+                description: response.message,
+            });
+            this.loadPendingPaymentArray();
+        }).catch(error => {
+            notification.error({
+                message: 'Ardena',
+                description: error.message || 'Sorry! Something went wrong. Please try again!'
+            });
+        })
     }
 
     handleCreate = () => {
@@ -354,9 +386,8 @@ class Schedule extends Component {
             onFilter: (value, record) => record.rider.name.toLowerCase().includes(value.toLowerCase()),
             onFilterDropdownVisibleChange: (visible) => {
                 if (visible) {
+                    console.log(this);
                     setTimeout(() => {
-                        console.log("now2");
-                        console.log(this.searchInput)
                         this.searchInput.focus();
                     });
                 }
@@ -378,14 +409,14 @@ class Schedule extends Component {
             render: (text, record) => (
                 <div>
                     <Popconfirm placement="left" title="Want to pay for this lesson? (pass)" onConfirm={() => {
-                        console.log("paid with pass")
+                        this.payReservation(record.id,{status: "Paid_pass"});
                     }}
                                 okText="Yes" cancelText="No">
                         <a>Pay with pass</a>
                     </Popconfirm>
                     <Divider type="vertical"/>
                     <Popconfirm placement="left" title="Want to pay for this lesson? (cash)" onConfirm={() => {
-                        console.log("paid with pass")
+                        this.payReservation(record.id,{status: "Paid_cash"});
                     }}
                                 okText="Yes" cancelText="No">
                         <a>Pay with cash</a>
@@ -397,15 +428,15 @@ class Schedule extends Component {
             title: 'Id',
             key: 'id',
             width: '15%',
-            render: (text, record) => (
-                <Link className="lesson-link" to={`/lessons/${record.id}`}>
-                    <a>{record.id}</a>
-                </Link>)
+            dataIndex: 'id'
         }, {
             title: 'name',
-            dataIndex: 'name',
             key: 'name',
-            width: '25%'
+            width: '25%',
+            render: (text, record) => (
+                <Link className="user-link" to={`/users/${record.username}`}>
+                    <a>{record.name}</a>
+                </Link>)
         }, {
             title: 'Level',
             dataIndex: 'level',
@@ -422,7 +453,7 @@ class Schedule extends Component {
             width: '20%',
             render: (text, record) => (
                 <Popconfirm placement="left" title="Want add pass to this user?" onConfirm={() => {
-                    this.addPassToUser(record.id)
+                    this.addPassToUser(record.id, {noOfRidesPermitted: 10})
                 }}
                             okText="Yes" cancelText="No">
                     <a>Add pass</a>

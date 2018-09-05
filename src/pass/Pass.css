@@ -1,0 +1,32 @@
+.pass-container {
+    margin: 0 auto;
+    margin-top: 20px;
+    max-width: 650px;
+    justify-content: space-between;
+}
+
+.stamp-container{
+    flex-wrap: wrap;
+    display: flex;
+    height: 270px;
+}
+
+.pass-expiry-date {
+    display: block;
+    color: #657786;
+    font-size: 15px;
+    text-align: center;
+}
+
+.pass-header {
+    margin-left: 10px;
+    margin-bottom: 10px;
+    height: 32px;
+}
+
+.pass-content {
+    margin-bottom: 30px;
+    padding: 20px 15px 20px 15px;
+    letter-spacing: .01em;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+}
