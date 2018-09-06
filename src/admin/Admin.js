@@ -240,7 +240,6 @@ class Admin extends Component {
                                        columns={instructorColumns}
                                        rowKey='id'
                                        rowClassName="lesson-row"
-                                       scroll={{ x: '100%' }}
                                     // scroll={{ x: '100%', y: '100%' }}
                                     // pagination={false}
                                 />
@@ -257,7 +256,6 @@ class Admin extends Component {
                                        columns={adminColumns}
                                        rowKey='id'
                                        rowClassName="lesson-row"
-                                       scroll={{ x: '100%' }}
                                     // scroll={{ x: '100%', y: '100%' }}
                                     // pagination={false}
                                 />

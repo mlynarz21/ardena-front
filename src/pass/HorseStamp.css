@@ -8,3 +8,16 @@
     align-items: center;
     border: 10px solid black;
 }
+
+@media (max-width: 460px) {
+    .horseico-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 30px;
+        line-height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 2px solid black;
+    }
+}

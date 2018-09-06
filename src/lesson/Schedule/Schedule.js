@@ -6,14 +6,15 @@ import NotFound from '../../common/NotFound';
 import ServerError from '../../common/ServerError';
 import * as moment from "moment";
 import {
-    acceptReservation, addLesson, addPass, cancelReservation,
+    acceptReservation, addLesson, addPass, cancelReservation, deleteHorse,
     deleteLesson, getAllUsers, getLessonsByDateAndInstructor, getLessonsByInstructor,
     getPendingReservationsByInstructor,
-    getUnpaidReservationsByInstructor, payForReservation
+    getUnpaidReservationsByInstructor, payForReservation, updateHorse, updateUserLevel
 } from "../../util/APIUtils";
 import {notification} from "antd/lib/index";
 import AddLessonForm from "./AddLessonForm";
 import {Link, withRouter} from 'react-router-dom';
+import EditableTable2 from "../../admin/EditableTableAuto";
 
 const TabPane = Tabs.TabPane;
 
@@ -234,6 +235,22 @@ class Schedule extends Component {
         this.formRef = formRef;
     };
 
+    handleSave = (row) => {
+        updateUserLevel(row.id,
+            {name:row.name, username:row.username, level:row.level}).then(response => {
+            notification.success({
+                message: 'Ardena',
+                description: response.message,
+            });
+            this.loadUserArray()
+        }).catch(error => {
+            notification.error({
+                message: 'Ardena',
+                description: error.message || 'Sorry! Something went wrong. Please try again!'
+            });
+        })
+    }
+
 
     render() {
 
@@ -262,6 +279,8 @@ class Schedule extends Component {
         const tabBarStyle = {
             textAlign: 'center'
         };
+
+        const options = ["Basic", "Medium", "Advanced", "Sport"];
 
         const lessonColumns = [{
             title: 'Id',
@@ -476,7 +495,8 @@ class Schedule extends Component {
             title: 'Rider level',
             dataIndex: 'level',
             key: 'level',
-            width: '15%'
+            width: '15%',
+            editable: true
         }, {
             title: 'Username',
             dataIndex: 'username',
@@ -551,7 +571,6 @@ class Schedule extends Component {
                                    columns={pendingReservationColumns}
                                    rowKey='id'
                                    rowClassName="lesson-row"
-                                   scroll={{ x: '100%' }}
                                 // scroll={{ x: '100%', y: '100%' }}
                                 // pagination={false}
                             />
@@ -565,22 +584,30 @@ class Schedule extends Component {
                                    columns={pendingPaymentColumns}
                                    rowKey='id'
                                    rowClassName="lesson-row"
-                                   scroll={{ x: '100%' }}
                                 // scroll={{ x: '100%', y: '100%' }}
                                 // pagination={false}
                             />
                         </TabPane>
 
                         <TabPane tab={`Riders`} key="4">
-                            <Table className="users-table"
-                                   dataSource={this.state.userArray}
-                                   columns={userColumns}
-                                   rowKey='id'
-                                   rowClassName="lesson-row"
-                                   scroll={{ x: '100%' }}
-                                // scroll={{ x: '100%', y: '100%' }}
-                                // pagination={false}
-                            />
+                            <EditableTable2
+                                className="users-table"
+                                dataSource={this.state.userArray}
+                                columns={userColumns}
+                                handleSave={this.handleSave}
+                                options={options}
+                                scroll={{ x: '100%' }}
+                            ></EditableTable2>
+
+                            {/*<Table className="users-table"*/}
+                                   {/*dataSource={this.state.userArray}*/}
+                                   {/*columns={userColumns}*/}
+                                   {/*rowKey='id'*/}
+                                   {/*rowClassName="lesson-row"*/}
+                                   {/*scroll={{ x: '100%' }}*/}
+                                {/*// scroll={{ x: '100%', y: '100%' }}*/}
+                                {/*// pagination={false}*/}
+                            {/*/>*/}
                         </TabPane>
                     </Tabs>
 

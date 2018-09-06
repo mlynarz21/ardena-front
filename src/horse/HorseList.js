@@ -8,6 +8,7 @@ import {Popconfirm, Button, Modal, Table } from 'antd';
 import {notification} from "antd/lib/index";
 import AddHorseForm from "./AddHorseForm";
 import EditableTable from "../admin/EditableTable";
+import EditableTable2 from "../admin/EditableTableAuto";
 
 class HorseList extends Component {
     constructor(props) {
@@ -124,6 +125,7 @@ class HorseList extends Component {
         if (this.state.serverError) {
             return <ServerError/>;
         }
+
         const horseColumns = [{
             title: 'Id',
             dataIndex: 'id',

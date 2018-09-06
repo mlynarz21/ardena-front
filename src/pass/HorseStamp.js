@@ -7,7 +7,7 @@ class HorseStamp extends Component {
     render() {
         return (
             <section className="horseico-circle" style={{backgroundColor: "orange"}}>
-                <img src={this.props.horseStamp}/>
+                <img height="90%" width="auto" src={this.props.horseStamp}/>
             </section>
         )
     }

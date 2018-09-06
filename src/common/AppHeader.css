@@ -83,8 +83,9 @@
     /*!*padding: 0 15px;*!*/
   /*!*}*!*/
 
-  /*.app-menu > li > a {*/
-    /*!*padding: 0 15px;*!*/
-    /*margin: 0 -5px;*/
-  /*}*/
+  .app-menu > li > a {
+    /*padding: 0 15px;*/
+    margin: 0 -5px;
+    overflow-x: auto;
+  }
 }

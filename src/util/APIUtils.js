@@ -250,6 +250,14 @@ export function castVote(voteData) {
     });
 }
 
+export function updateUserLevel(userId, userData) {
+    return request({
+        url: API_BASE_URL + "/users/"+userId,
+        method: 'PATCH',
+        body: JSON.stringify(userData)
+    });
+}
+
 export function addPass(userId, data) {
     return request({
         url: API_BASE_URL + "/passes/"+ userId,

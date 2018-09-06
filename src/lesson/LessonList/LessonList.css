@@ -16,7 +16,8 @@
 }
 
 .reservation-table, .reservation-history-table, .pending-payments-table{
-    margin: 30px;
+    margin-top: 30px;
+    overflow: auto;
 }
 
 .date-alert{

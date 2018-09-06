@@ -1,5 +1,6 @@
-import { Table, Input, Button, Popconfirm, Form } from 'antd';
+import {Table, Select, Button, Popconfirm, Form, AutoComplete} from 'antd';
 import React, { Component } from 'react';
+import EditableTable from "./EditableTable";
 
 const FormItem = Form.Item;
 const EditableContext = React.createContext();
@@ -11,6 +12,7 @@ const EditableRow = ({ form, index, ...props }) => (
 );
 
 const EditableFormRow = Form.create()(EditableRow);
+const Option = Select.Option;
 
 class EditableCell extends Component {
     state = {
@@ -31,7 +33,7 @@ class EditableCell extends Component {
 
     toggleEdit = () => {
         const editing = !this.state.editing;
-        this.setState({ editing }, () => {
+        this.setState({editing}, () => {
             if (editing) {
                 this.input.focus();
             }
@@ -39,25 +41,26 @@ class EditableCell extends Component {
     }
 
     handleClickOutside = (e) => {
-        const { editing } = this.state;
+        const {editing} = this.state;
         if (editing && this.cell !== e.target && !this.cell.contains(e.target)) {
-            this.save();
+            this.save(e);
         }
     }
 
     save = () => {
-        const { record, handleSave } = this.props;
+        const {record, handleSave} = this.props;
         this.form.validateFields((error, values) => {
             if (error) {
                 return;
             }
             this.toggleEdit();
-            handleSave({ ...record, ...values });
+            console.log(values);
+            handleSave({...record, ...values});
         });
     }
 
     render() {
-        const { editing } = this.state;
+        const {editing} = this.state;
         const {
             editable,
             dataIndex,
@@ -65,7 +68,8 @@ class EditableCell extends Component {
             record,
             index,
             handleSave,
-            ...restProps
+            options,
+            ...restProps,
         } = this.props;
         return (
             <td ref={node => (this.cell = node)} {...restProps}>
@@ -75,24 +79,30 @@ class EditableCell extends Component {
                             this.form = form;
                             return (
                                 editing ? (
-                                    <FormItem style={{ margin: 0 }}>
+                                    <FormItem style={{margin: 0}}>
                                         {form.getFieldDecorator(dataIndex, {
                                             rules: [{
                                                 required: true,
                                                 message: `${title} is required.`,
                                             }],
-                                            initialValue: record[dataIndex],
                                         })(
-                                            <Input
+                                            <Select
+                                                onSelect={this.save}
+
                                                 ref={node => (this.input = node)}
-                                                onPressEnter={this.save}
-                                            />
+                                                style={{width: 120}}>
+                                                {
+                                                    options.map(element => {
+                                                    return <Option value={element}> {element}</Option>
+                                                    })
+                                                }
+                                            </Select>
                                         )}
                                     </FormItem>
                                 ) : (
                                     <div
                                         className="editable-cell-value-wrap"
-                                        style={{ paddingRight: 24 }}
+                                        style={{paddingRight: 24}}
                                         onClick={this.toggleEdit}
                                     >
                                         {restProps.children}
@@ -107,7 +117,7 @@ class EditableCell extends Component {
     }
 }
 
-class EditableTable extends Component {
+class EditableTable2 extends Component {
     constructor(props) {
         super(props);
         this.columns = this.props.columns
@@ -126,10 +136,12 @@ class EditableTable extends Component {
     }
 
     render() {
+        const options = ["Basic", "Medium"];
+
         const components = {
             body: {
                 row: EditableFormRow,
-                cell: EditableCell,
+                cell: EditableCell
             },
         };
         const columns = this.columns.map((col) => {
@@ -144,6 +156,7 @@ class EditableTable extends Component {
                     dataIndex: col.dataIndex,
                     title: col.title,
                     handleSave: this.props.handleSave,
+                    options: this.props.options
                 }),
             };
         });
@@ -162,4 +175,4 @@ class EditableTable extends Component {
     }
 }
 
-export default EditableTable
+export default EditableTable2
