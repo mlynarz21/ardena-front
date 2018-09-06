@@ -213,6 +213,14 @@ export function deleteHorse(horseId) {
     });
 }
 
+export function updateHorse(horseId, horseData) {
+    return request({
+        url: API_BASE_URL + "/horses/" + horseId,
+        method: 'PATCH',
+        body: JSON.stringify(horseData)
+    });
+}
+
 export function deleteLesson(lessonId) {
     return request({
         url: API_BASE_URL + "/lessons/" + lessonId,

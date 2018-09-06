@@ -3,10 +3,11 @@ import LoadingIndicator  from '../common/LoadingIndicator';
 import './HorseList.css';
 import NotFound from '../common/NotFound';
 import ServerError from '../common/ServerError';
-import {addHorse, getAllHorses, deleteHorse} from '../util/APIUtils';
+import {addHorse, getAllHorses, deleteHorse, updateHorse} from '../util/APIUtils';
 import {Popconfirm, Button, Modal, Table } from 'antd';
 import {notification} from "antd/lib/index";
 import AddHorseForm from "./AddHorseForm";
+import EditableTable from "../admin/EditableTable";
 
 class HorseList extends Component {
     constructor(props) {
@@ -93,6 +94,23 @@ class HorseList extends Component {
         this.formRef = formRef;
     };
 
+    handleSave = (row) => {
+        updateHorse(row.id,
+            {horseName:row.horseName}).then(response => {
+            notification.success({
+                message: 'Ardena',
+                description: response.message,
+            });
+            this.props.history.push("/horses");
+            this.loadHorseArray()
+        }).catch(error => {
+            notification.error({
+                message: 'Ardena',
+                description: error.message || 'Sorry! Something went wrong. Please try again!'
+            });
+        })
+    }
+
     render() {
 
         if (this.state.isLoading) {
@@ -106,7 +124,7 @@ class HorseList extends Component {
         if (this.state.serverError) {
             return <ServerError/>;
         }
-        const columns = [{
+        const horseColumns = [{
             title: 'Id',
             dataIndex: 'id',
             key: 'id',
@@ -115,7 +133,8 @@ class HorseList extends Component {
             title: 'Horse Name',
             dataIndex: 'horseName',
             key: 'horseName',
-            width: '50%'
+            width: '50%',
+            editable: true
         }, {
             title: 'Action',
             key: 'action',
@@ -139,16 +158,23 @@ class HorseList extends Component {
                     onCreate={this.handleCreate}
                 />
 
-                <Table className="horse-table"
-                       dataSource={this.state.horseArray}
-                       columns={columns}
-                       rowKey='id'
-                       bordered
-                       rowClassName="horse-row"
-                       scroll={{ x: '100%' }}
-                    // scroll={{ x: '100%', y: '100%' }}
-                    // pagination={false}
-                />
+                {/*<Table className="horse-table"*/}
+                       {/*dataSource={this.state.horseArray}*/}
+                       {/*columns={horseColumns}*/}
+                       {/*rowKey='id'*/}
+                       {/*bordered*/}
+                       {/*rowClassName="horse-row"*/}
+                       {/*scroll={{ x: '100%' }}*/}
+                    {/*// scroll={{ x: '100%', y: '100%' }}*/}
+                    {/*// pagination={false}*/}
+                {/*/>*/}
+
+                <EditableTable
+                    className="horse-table"
+                    dataSource={this.state.horseArray}
+                    columns={horseColumns}
+                    handleSave={this.handleSave}
+                ></EditableTable>
 
                 <Button type="primary"
                         className={this.state.horseArray.length>0 ? 'add-horse-button' : 'add-horse-button-no-data'}

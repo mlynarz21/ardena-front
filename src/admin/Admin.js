@@ -12,6 +12,7 @@ import {
 } from "../util/APIUtils";
 import {notification} from "antd/lib/index";
 import AddPrivilegesForm from "./AddPrivilegesForm";
+import EditableTable from "./EditableTable";
 
 const TabPane = Tabs.TabPane;
 
