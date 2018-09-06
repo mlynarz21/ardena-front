@@ -24,7 +24,7 @@ class Pass extends Component {
     }
 
     loadPass() {
-        getPass().then(response => {
+        getPass(this.props.username).then(response => {
             this.setState(
                 {
                     isLoading: false,

@@ -523,6 +523,7 @@ class Schedule extends Component {
                                            columns={lessonColumns}
                                            rowKey='id'
                                            rowClassName="lesson-row"
+                                           scroll={{ x: '100%' }}
                                         // scroll={{ x: '100%', y: '100%' }}
                                         // pagination={false}
                                     />
@@ -551,6 +552,7 @@ class Schedule extends Component {
                                    columns={pendingReservationColumns}
                                    rowKey='id'
                                    rowClassName="lesson-row"
+                                   scroll={{ x: '100%' }}
                                 // scroll={{ x: '100%', y: '100%' }}
                                 // pagination={false}
                             />
@@ -564,6 +566,7 @@ class Schedule extends Component {
                                    columns={pendingPaymentColumns}
                                    rowKey='id'
                                    rowClassName="lesson-row"
+                                   scroll={{ x: '100%' }}
                                 // scroll={{ x: '100%', y: '100%' }}
                                 // pagination={false}
                             />
@@ -575,6 +578,7 @@ class Schedule extends Component {
                                    columns={userColumns}
                                    rowKey='id'
                                    rowClassName="lesson-row"
+                                   scroll={{ x: '100%' }}
                                 // scroll={{ x: '100%', y: '100%' }}
                                 // pagination={false}
                             />

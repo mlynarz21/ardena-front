@@ -145,6 +145,7 @@ class HorseList extends Component {
                        rowKey='id'
                        bordered
                        rowClassName="horse-row"
+                       scroll={{ x: '100%' }}
                     // scroll={{ x: '100%', y: '100%' }}
                     // pagination={false}
                 />

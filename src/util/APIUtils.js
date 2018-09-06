@@ -174,10 +174,10 @@ export function getLessonsByDateAndInstructor(lessonData) {
     });
 }
 
-export function getPass() {
+export function getPass(username) {
 
     return request({
-        url: API_BASE_URL + "/passes/user",
+        url: API_BASE_URL + "/passes/"+username,
         method: 'GET',
     });
 }

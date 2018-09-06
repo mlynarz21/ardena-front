@@ -418,6 +418,7 @@ class LessonList extends Component {
                                        columns={lessonColumns}
                                        rowKey='id'
                                        rowClassName="lesson-row"
+                                       scroll={{ x: '100%' }}
                                     // scroll={{ x: '100%', y: '100%' }}
                                     // pagination={false}
                                 />
@@ -430,6 +431,7 @@ class LessonList extends Component {
                                        columns={reservationColumns}
                                        rowKey='id'
                                        rowClassName="lesson-row"
+                                       scroll={{ x: '100%' }}
                                     // scroll={{ x: '100%', y: '100%' }}
                                     // pagination={false}
                                 />
@@ -441,6 +443,7 @@ class LessonList extends Component {
                                    columns={reservationHistoryColumns}
                                    rowKey='id'
                                    rowClassName="lesson-row"
+                                   scroll={{ x: '100%' }}
                                 // scroll={{ x: '100%', y: '100%' }}
                                 // pagination={false}
                             />
@@ -452,6 +455,7 @@ class LessonList extends Component {
                                    columns={pendingPaymentColumns}
                                    rowKey='id'
                                    rowClassName="lesson-row"
+                                   scroll={{ x: '100%' }}
                                 // scroll={{ x: '100%', y: '100%' }}
                                 // pagination={false}
                             />

@@ -111,7 +111,7 @@ class Profile extends Component {
                                         <PollList username={this.props.match.params.username} type="USER_VOTED_POLLS" />
                                     </TabPane>
                                     <TabPane tab={"Passes"}  key="3">
-                                        <Pass></Pass>
+                                        <Pass username={this.props.match.params.username}></Pass>
                                     </TabPane>
                                 </Tabs>
                             </div>  
