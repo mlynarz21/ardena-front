@@ -11,10 +11,9 @@
 
 .lesson-container{
     flex: 2;
-    margin: 10px;
 }
 
-.reservation-table, .pending-payments-table{
+.reservation-table, .pending-payments-table, .users-table{
     margin: 30px;
 }
 

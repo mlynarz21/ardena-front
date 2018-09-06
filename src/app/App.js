@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 
 import { getCurrentUser } from '../util/APIUtils';
-import { isInstructor,ACCESS_TOKEN } from '../constants';
+import {isInstructor, ACCESS_TOKEN, isAdmin} from '../constants';
 
 import PollList from '../poll/PollList';
 import NewPoll from '../poll/NewPoll';
@@ -19,10 +19,10 @@ import NotFound from '../common/NotFound';
 import LoadingIndicator from '../common/LoadingIndicator';
 import PrivateRoute from '../common/PrivateRoute';
 import HorseList from '../horse/HorseList';
-import LessonList from '../lesson/LessonList';
+import LessonList from '../lesson/LessonList/LessonList';
 
 import { Layout, notification } from 'antd';
-import Schedule from "../lesson/Schedule";
+import Schedule from "../lesson/Schedule/Schedule";
 import Lesson from "../lesson/Lesson";
 import Admin from "../admin/Admin";
 const { Content } = Layout;
@@ -34,6 +34,8 @@ class App extends Component {
             currentUser: null,
             isAuthenticated: false,
             isLoading: false,
+            isInstructor: false,
+            isAdmin: false
         }
         this.handleLogout = this.handleLogout.bind(this);
         this.loadCurrentUser = this.loadCurrentUser.bind(this);
@@ -55,7 +57,9 @@ class App extends Component {
                 this.setState({
                     currentUser: response,
                     isAuthenticated: true,
-                    isLoading: false
+                    isLoading: false,
+                    isInstructor: localStorage.getItem(isInstructor)==='true',
+                    isAdmin: localStorage.getItem(isAdmin)==='true'
                 });
             }).catch(error => {
             this.setState({
@@ -71,10 +75,13 @@ class App extends Component {
     handleLogout(redirectTo = "/", notificationType = "success", description = "You're successfully logged out.") {
         localStorage.removeItem(ACCESS_TOKEN);
         localStorage.removeItem(isInstructor);
+        localStorage.removeItem(isAdmin);
 
         this.setState({
             currentUser: null,
-            isAuthenticated: false
+            isAuthenticated: false,
+            isInstructor : false,
+            isAdmin : false
         });
 
         this.props.history.push(redirectTo);
@@ -112,11 +119,11 @@ class App extends Component {
                                                                 currentUser={this.state.currentUser}
                                                                 handleLogout={this.handleLogout} {...props} />}>
                             </Route>
-                            <Route authenticated={this.state.isAuthenticated} path="/horses" component={HorseList}></Route>
-                            <Route authenticated={this.state.isAuthenticated} path="/admin" component={Admin}></Route>
-                            <Route authenticated={this.state.isAuthenticated} path="/lessons/:lessonId" component={Lesson}></Route>
-                            <Route authenticated={this.state.isAuthenticated} path="/lessons" component={LessonList}></Route>
-                            <Route authenticated={this.state.isAuthenticated} path="/schedule" component={Schedule}></Route>
+                            <PrivateRoute authenticated={this.state.isInstructor} path="/horses" component={HorseList}></PrivateRoute>
+                            <PrivateRoute authenticated={this.state.isAdmin} path="/admin" component={Admin}></PrivateRoute>
+                            <PrivateRoute authenticated={this.state.isAuthenticated} path="/lessons/:lessonId" component={Lesson}></PrivateRoute>
+                            <PrivateRoute authenticated={this.state.isAuthenticated} path="/lessons" component={LessonList}></PrivateRoute>
+                            <PrivateRoute authenticated={this.state.isInstructor} path="/schedule" component={Schedule}></PrivateRoute>
                             <Route path="/login"
                                    render={(props) => <Login onLogin={this.handleLogin} {...props} />}></Route>
                             <Route path="/signup" component={Signup}></Route>

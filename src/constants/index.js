@@ -2,6 +2,7 @@ export const API_BASE_URL = 'http://localhost:5000/api';
 //export const API_BASE_URL = '/api';
 export const ACCESS_TOKEN = 'accessToken';
 export const isInstructor = false;
+export const isAdmin = true;
 
 export const POLL_LIST_SIZE = 30;
 export const MAX_CHOICES = 6;

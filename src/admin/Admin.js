@@ -171,7 +171,7 @@ class Admin extends Component {
             width: '30%',
             render: (text, record) => (
                 <Link className="user-link" to={`/users/${record.username}`}>
-                    <a>{record.name}</a>
+                    {record.name}
                 </Link>)
         }, {
             title: 'username',
@@ -202,7 +202,7 @@ class Admin extends Component {
             width: '30%',
             render: (text, record) => (
                 <Link className="user-link" to={`/users/${record.username}`}>
-                    <a>{record.name}</a>
+                    {record.name}
                 </Link>)
         }, {
             title: 'username',

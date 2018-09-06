@@ -163,7 +163,7 @@ class Lesson extends Component {
             width: '20%',
             render: (text, record) => (
                 <Link className="user-link" to={`/users/${record.rider.username}`}>
-                    <a>{record.rider.name}</a>
+                    {record.rider.name}
                 </Link>),
             sorter: (a, b) => ('' + a.rider.name).localeCompare(b.rider.name)
     }, {

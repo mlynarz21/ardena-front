@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import './Schedule.css';
 import {Button, Popconfirm, Table, Tabs, Calendar, Alert, Divider, Icon, Input} from 'antd';
-import LoadingIndicator  from '../common/LoadingIndicator';
-import NotFound from '../common/NotFound';
-import ServerError from '../common/ServerError';
+import LoadingIndicator  from '../../common/LoadingIndicator';
+import NotFound from '../../common/NotFound';
+import ServerError from '../../common/ServerError';
 import * as moment from "moment";
 import {
     acceptReservation, addLesson, addPass, cancelReservation,
     deleteLesson, getAllUsers, getLessonsByDateAndInstructor, getLessonsByInstructor,
     getPendingReservationsByInstructor,
     getUnpaidReservationsByInstructor, payForReservation
-} from "../util/APIUtils";
+} from "../../util/APIUtils";
 import {notification} from "antd/lib/index";
 import AddLessonForm from "./AddLessonForm";
 import {Link, withRouter} from 'react-router-dom';
@@ -269,10 +269,10 @@ class Schedule extends Component {
             width: '20%',
             render: (text, record) => (
                 <Link className="lesson-link" to={`/lessons/${record.id}`}>
-                    <a>{record.id}</a>
+                    {record.id}
                 </Link>)
         }, {
-            title: 'Level',
+            title: 'Lesson level',
             dataIndex: 'lessonLevel',
             key: 'lessonLevel',
             width: '25%'
@@ -300,30 +300,30 @@ class Schedule extends Component {
             width: '15%',
             render: (text, record) => (
                 <Link className="lesson-link" to={`/lessons/${record.lesson.id}`}>
-                    <a>{record.id}</a>
+                    {record.id}
+                </Link>)
+        }, {
+            title: 'Rider name',
+            key: 'name',
+            width: '25%',
+            render: (text, record) => (
+                <Link className="user-link" to={`/users/${record.rider.username}`}>
+                   {record.rider.name}
                 </Link>)
         }, {
             title: 'Lesson level',
             dataIndex: 'lesson.lessonLevel',
             key: 'lessonLevel',
-            width: '20%'
+            width: '15%'
         }, {
             title: 'Date',
             dataIndex: 'lesson.date',
             key: 'date',
-            width: '25%'
-        }, {
-            title: 'Rider name',
-            key: 'name',
-            width: '20%',
-            render: (text, record) => (
-                <Link className="user-link" to={`/users/${record.rider.username}`}>
-                    <a>{record.rider.name}</a>
-                </Link>)
+            width: '20%'
         }, {
             title: 'Action',
             key: 'action',
-            width: '20%',
+            width: '25%',
             render: (text, record) => (
                 <div>
                     <Popconfirm placement="left" title="Want to accept this reservation?" onConfirm={() => {
@@ -349,20 +349,10 @@ class Schedule extends Component {
             width: '15%',
             render: (text, record) => (
                 <Link className="lesson-link" to={`/lessons/${record.lesson.id}`}>
-                    <a>{record.id}</a>
+                    {record.id}
                 </Link>)
         }, {
-            title: 'Level',
-            dataIndex: 'lesson.lessonLevel',
-            key: 'lessonLevel',
-            width: '15%'
-        }, {
-            title: 'Date',
-            dataIndex: 'lesson.date',
-            key: 'date',
-            width: '20%'
-        }, {
-            title: 'Rider',
+            title: 'Rider name',
             key: 'rider',
             width: '25%',
             dataIndex: 'rider.name',
@@ -389,7 +379,7 @@ class Schedule extends Component {
                     });
                 }
             },
-            render: (text) => {
+            render: (text, record) => {
                 const {userFilterText} = this.state.userFilterText;
                 return userFilterText ? (
                     <span>
@@ -397,8 +387,18 @@ class Schedule extends Component {
                             fragment.toLowerCase() === userFilterText.toLowerCase()
                                 ? <span key={i} className="highlight">{fragment}</span> : fragment
                         ))}
-                    </span>) : text;
+                    </span>) : <Link className="user-link" to={`/users/${record.rider.username}`}>{text}</Link>;
             }
+        }, {
+            title: 'Lesson level',
+            dataIndex: 'lesson.lessonLevel',
+            key: 'lessonLevel',
+            width: '15%'
+        }, {
+            title: 'Date',
+            dataIndex: 'lesson.date',
+            key: 'date',
+            width: '20%'
         }, {
             title: 'Action',
             key: 'action',
@@ -427,18 +427,56 @@ class Schedule extends Component {
             width: '15%',
             dataIndex: 'id'
         }, {
-            title: 'Name',
+        //     title: 'Name',
+        //     key: 'name',
+        //     width: '25%',
+        //     render: (text, record) => (
+        //         <Link className="user-link" to={`/users/${record.username}`}>
+        //             <a>{record.name}</a>
+        //         </Link>)
+        // }, {
+            title: 'Rider name',
             key: 'name',
             width: '25%',
-            render: (text, record) => (
-                <Link className="user-link" to={`/users/${record.username}`}>
-                    <a>{record.name}</a>
-                </Link>)
+            dataIndex: 'name',
+            filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
+                <div className="custom-filter-dropdown">
+                    <Input
+                        ref={(input) => {
+                            this.searchInput = input;
+                        }}
+                        placeholder="Search name"
+                        value={selectedKeys[0]}
+                        onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                        onPressEnter={handleSearch(selectedKeys, confirm)}
+                    />
+                    <Button type="primary" onClick={handleSearch(selectedKeys, confirm)}>Search</Button>
+                    <Button onClick={handleReset(clearFilters)}>Reset</Button>
+                </div>
+            ),
+            onFilter: (value, record) => record.name.toLowerCase().includes(value.toLowerCase()),
+            onFilterDropdownVisibleChange: (visible) => {
+                if (visible) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    });
+                }
+            },
+            render: (text, record) => {
+                const {userFilterText} = this.state.userFilterText;
+                return userFilterText ? (
+                    <span>
+                        {text.split(new RegExp(`(?<=${userFilterText})|(?=${userFilterText})`, 'i')).map((fragment, i) => (
+                            fragment.toLowerCase() === userFilterText.toLowerCase()
+                                ? <span key={i} className="highlight">{fragment}</span> : fragment
+                        ))}
+                    </span>) : <Link className="user-link" to={`/users/${record.username}`}>{text}</Link>;
+            }
         }, {
-            title: 'Level',
+            title: 'Rider level',
             dataIndex: 'level',
             key: 'level',
-            width: '20%'
+            width: '15%'
         }, {
             title: 'Username',
             dataIndex: 'username',
@@ -447,7 +485,7 @@ class Schedule extends Component {
         }, {
             title: 'Action',
             key: 'action',
-            width: '20%',
+            width: '25%',
             render: (text, record) => (
                 <Popconfirm placement="left" title="Want add pass to this user?" onConfirm={() => {
                     this.addPassToUser(record.id, {noOfRidesPermitted: 10})

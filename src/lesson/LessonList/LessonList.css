@@ -11,7 +11,7 @@
 
 .lesson-table{
     flex: 2;
-    margin: 10px;
+    margin-top: 10px;
 }
 
 .reservation-table, .reservation-history-table, .pending-payments-table{

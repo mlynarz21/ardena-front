@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import './LessonList.css';
 import { Popconfirm, Table, Tabs, Calendar, Alert } from 'antd';
-import LoadingIndicator  from '../common/LoadingIndicator';
-import NotFound from '../common/NotFound';
-import ServerError from '../common/ServerError';
+import LoadingIndicator  from '../../common/LoadingIndicator';
+import NotFound from '../../common/NotFound';
+import ServerError from '../../common/ServerError';
 import * as moment from "moment";
 import {
     addReservation, cancelReservation, getAllHorses, getInstructors, getLessonsByDateAndUser,
     getUnpaidReservationsByUser, getUserReservationHistory,
     getUserReservations, payForReservation
-} from "../util/APIUtils";
+} from "../../util/APIUtils";
 import {notification} from "antd/lib/index";
 import {Link, withRouter} from 'react-router-dom';
 
@@ -203,7 +203,7 @@ class LessonList extends Component {
             width: '10%',
             render: (text, record) => (
                 <Link className="lesson-link" to={`/lessons/${record.id}`}>
-                    <a>{record.id}</a>
+                   {record.id}
                 </Link>)
         }, {
             title: 'Level',
@@ -221,7 +221,7 @@ class LessonList extends Component {
             width: '30%',
             render: (text, record) => (
                 <Link className="user-link" to={`/users/${record.instructor.username}`}>
-                    <a>{record.instructor.name}</a>
+                    {record.instructor.name}
                 </Link>)
         }, {
             title: 'Action',
@@ -261,7 +261,7 @@ class LessonList extends Component {
             width: '20%',
             render: (text, record) => (
                 <Link className="user-link" to={`/users/${record.lesson.instructor.username}`}>
-                    <a>{record.lesson.instructor.name}</a>
+                    {record.lesson.instructor.name}
                 </Link>)
         }, {
             title: 'Horse',
@@ -293,13 +293,13 @@ class LessonList extends Component {
             width: '10%',
             render: (text, record) => (
                 <Link className="lesson-link" to={`/lessons/${record.lesson.id}`}>
-                    <a>{record.id}</a>
+                    {record.id}
                 </Link>)
         }, {
             title: 'Level',
             dataIndex: 'lesson.lessonLevel',
             key: 'lessonLevel',
-            width: '15%',
+            width: '10%',
             filters: [
                 { text: 'Basic', value: 'Basic' },
                 { text: 'Medium', value: 'Medium' },
@@ -316,10 +316,10 @@ class LessonList extends Component {
         }, {
             title: 'Instructor',
             key: 'instructor',
-            width: '25%',
+            width: '20%',
             render: (text, record) => (
                 <Link className="user-link" to={`/users/${record.lesson.instructor.username}`}>
-                    <a>{record.lesson.instructor.name}</a>
+                    {record.lesson.instructor.name}
                 </Link>),
             filters:
                 this.state.instructorArray.map(element => {
@@ -340,7 +340,7 @@ class LessonList extends Component {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            width: '15%',
+            width: '25%',
             filters: [
                 { text: 'Cancelled', value: 'Cancelled' },
                 { text: 'Pending', value: 'Pending' },
@@ -355,16 +355,16 @@ class LessonList extends Component {
             title: 'Id',
             dataIndex: 'id',
             key: 'id',
-            width: '15%',
+            width: '10%',
             render: (text, record) => (
                 <Link className="lesson-link" to={`/lessons/${record.lesson.id}`}>
-                    <a>{record.id}</a>
+                    {record.id}
                 </Link>)
         }, {
             title: 'Level',
             dataIndex: 'lesson.lessonLevel',
             key: 'lessonLevel',
-            width: '15%'
+            width: '10%'
         }, {
             title: 'Date',
             dataIndex: 'lesson.date',
@@ -373,15 +373,15 @@ class LessonList extends Component {
         }, {
             title: 'Instructor',
             key: 'instructor',
-            width: '25%',
+            width: '20%',
             render: (text, record) => (
                 <Link className="user-link" to={`/users/${record.lesson.instructor.username}`}>
-                    <a>{record.lesson.instructor.name}</a>
+                    {record.lesson.instructor.name}
                 </Link>)
         }, {
             title: 'Action',
             key: 'action',
-            width: '25%',
+            width: '40%',
             render: (text, record) => (
                 <Popconfirm placement="left" title="Want to pay for this lesson? (pass)" onConfirm={() => {
                     this.payReservation(record.id,{status: "Paid_pass"});

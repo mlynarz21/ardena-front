@@ -54,7 +54,10 @@ class Pass extends Component {
         }
 
         if (this.state.pass===null) {
-            return <span>No valid passes found</span>;
+            return (
+                <div className="no-pass-found">
+                    <span>No valid passes found</span>
+                </div>);
         }
 
         return (
@@ -67,7 +70,7 @@ class Pass extends Component {
                     </div>
                     <div className="stamp-container">
                         {Array.from(new Array(this.state.pass.noOfRidesPermitted), (stamp, i) => i < this.state.pass.usedRides ? (
-                            <HorseStamp horseStamp={horseStamp}></HorseStamp>) : (<HorseStamp></HorseStamp>))}
+                            <HorseStamp horseStamp={horseStamp} ></HorseStamp>) : (<HorseStamp></HorseStamp>))}
                     </div>
                 </div>
             </div>
