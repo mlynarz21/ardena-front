@@ -523,7 +523,6 @@ class Schedule extends Component {
                                            columns={lessonColumns}
                                            rowKey='id'
                                            rowClassName="lesson-row"
-                                           scroll={{ x: '100%' }}
                                         // scroll={{ x: '100%', y: '100%' }}
                                         // pagination={false}
                                     />

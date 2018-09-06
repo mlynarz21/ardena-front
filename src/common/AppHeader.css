@@ -8,11 +8,11 @@
     font-size: 21px;
     display: inline-block;
   }
-  
+
   .app-title a:hover {
     text-decoration: none;
   }
-  
+
   .app-header {
     position: fixed;
     width: 100%;
@@ -25,14 +25,14 @@
     float: right;
   }
   
-  .app-menu > li {
-    padding: 0 20px;
-  }
+  /*.app-menu > li {*/
+    /*padding: 0 20px;*/
+  /*}*/
 
-  .app-menu > li > a {
-    padding: 0 20px;
-    margin: 0 -20px;
-  }
+  /*.app-menu > li > a {*/
+    /*padding: 0 20px;*/
+    /*margin: 0 -20px;*/
+  /*}*/
 
   .app-menu > li > a > i {
     margin-right: 0 !important;
@@ -74,17 +74,17 @@
     margin-top: 0px;
   }
 
-@media (max-width: 768px) {
+@media (max-width: 460px) {
   .app-title a {
-    font-size: 20px;
+    display: none;
   }
 
-  .app-menu > li {
-    padding: 0 15px;
-  }
+  /*!*.app-menu > li {*!*/
+    /*!*padding: 0 15px;*!*/
+  /*!*}*!*/
 
-  .app-menu > li > a {
-    padding: 0 15px;
-    margin: 0 -15px;
-  }
+  /*.app-menu > li > a {*/
+    /*!*padding: 0 15px;*!*/
+    /*margin: 0 -5px;*/
+  /*}*/
 }
