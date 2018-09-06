@@ -251,7 +251,7 @@ class Schedule extends Component {
 
         let handleSearch = (selectedKeys, confirm) => () => {
             confirm();
-            this.setState({userFilterText: selectedKeys[0]});
+            this.setState({userFilterText: selectedKeys[0]===undefined ? " " : selectedKeys[0]});
         }
 
         let handleReset = clearFilters => () => {
@@ -371,22 +371,19 @@ class Schedule extends Component {
                     <Input
                         ref={(input) => {
                             this.searchInput = input;
-                            console.log("now");
-                            console.log(this.searchInput)
                         }}
                         placeholder="Search name"
                         value={selectedKeys[0]}
                         onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-                        onPressEnter={this.handleSearch(selectedKeys, confirm)}
+                        onPressEnter={handleSearch(selectedKeys, confirm)}
                     />
-                    <Button type="primary" onClick={this.handleSearch(selectedKeys, confirm)}>Search</Button>
-                    <Button onClick={this.handleReset(clearFilters)}>Reset</Button>
+                    <Button type="primary" onClick={handleSearch(selectedKeys, confirm)}>Search</Button>
+                    <Button onClick={handleReset(clearFilters)}>Reset</Button>
                 </div>
             ),
             onFilter: (value, record) => record.rider.name.toLowerCase().includes(value.toLowerCase()),
             onFilterDropdownVisibleChange: (visible) => {
                 if (visible) {
-                    console.log(this);
                     setTimeout(() => {
                         this.searchInput.focus();
                     });
@@ -398,7 +395,7 @@ class Schedule extends Component {
                     <span>
                         {text.split(new RegExp(`(?<=${userFilterText})|(?=${userFilterText})`, 'i')).map((fragment, i) => (
                             fragment.toLowerCase() === userFilterText.toLowerCase()
-                                ? <span key={i} className="highlight">{fragment}</span> : fragment // eslint-disable-line
+                                ? <span key={i} className="highlight">{fragment}</span> : fragment
                         ))}
                     </span>) : text;
             }
@@ -430,7 +427,7 @@ class Schedule extends Component {
             width: '15%',
             dataIndex: 'id'
         }, {
-            title: 'name',
+            title: 'Name',
             key: 'name',
             width: '25%',
             render: (text, record) => (
