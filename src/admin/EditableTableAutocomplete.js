@@ -117,7 +117,7 @@ class EditableCell extends Component {
     }
 }
 
-class EditableTable2 extends Component {
+class EditableTableSelect extends Component {
     constructor(props) {
         super(props);
         this.columns = this.props.columns
@@ -175,4 +175,4 @@ class EditableTable2 extends Component {
     }
 }
 
-export default EditableTable2
+export default EditableTableSelect

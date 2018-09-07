@@ -14,7 +14,7 @@ import {
 import {notification} from "antd/lib/index";
 import AddLessonForm from "./AddLessonForm";
 import {Link, withRouter} from 'react-router-dom';
-import EditableTable2 from "../../admin/EditableTableAuto";
+import EditableTable2 from "../../admin/EditableTableSelect";
 
 const TabPane = Tabs.TabPane;
 

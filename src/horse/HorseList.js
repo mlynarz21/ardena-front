@@ -8,7 +8,7 @@ import {Popconfirm, Button, Modal, Table } from 'antd';
 import {notification} from "antd/lib/index";
 import AddHorseForm from "./AddHorseForm";
 import EditableTable from "../admin/EditableTable";
-import EditableTable2 from "../admin/EditableTableAuto";
+import EditableTable2 from "../admin/EditableTableSelect";
 
 class HorseList extends Component {
     constructor(props) {
