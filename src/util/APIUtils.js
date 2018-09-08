@@ -258,6 +258,22 @@ export function updateUserLevel(userId, userData) {
     });
 }
 
+export function updateReservation(reservationId, reservationData) {
+    return request({
+        url: API_BASE_URL + "/reservations/"+reservationId,
+        method: 'PATCH',
+        body: JSON.stringify(reservationData)
+    });
+}
+
+export function updateLesson(lessonId, lessonData) {
+    return request({
+        url: API_BASE_URL + "/lessons/"+lessonId,
+        method: 'PATCH',
+        body: JSON.stringify(lessonData)
+    });
+}
+
 export function addPass(userId, data) {
     return request({
         url: API_BASE_URL + "/passes/"+ userId,

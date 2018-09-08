@@ -14,7 +14,7 @@ import {
 import {notification} from "antd/lib/index";
 import AddLessonForm from "./AddLessonForm";
 import {Link, withRouter} from 'react-router-dom';
-import EditableTable2 from "../../admin/EditableTableSelect";
+import EditableTableSelect from "../../admin/EditableTableSelect";
 
 const TabPane = Tabs.TabPane;
 
@@ -249,7 +249,7 @@ class Schedule extends Component {
                 description: error.message || 'Sorry! Something went wrong. Please try again!'
             });
         })
-    }
+    };
 
 
     render() {
@@ -269,18 +269,16 @@ class Schedule extends Component {
         let handleSearch = (selectedKeys, confirm) => () => {
             confirm();
             this.setState({userFilterText: selectedKeys[0]===undefined ? " " : selectedKeys[0]});
-        }
+        };
 
         let handleReset = clearFilters => () => {
             clearFilters();
             this.setState({userFilterText: ''});
-        }
+        };
 
         const tabBarStyle = {
             textAlign: 'center'
         };
-
-        const options = ["Basic", "Medium", "Advanced", "Sport"];
 
         const lessonColumns = [{
             title: 'Id',
@@ -590,14 +588,12 @@ class Schedule extends Component {
                         </TabPane>
 
                         <TabPane tab={`Riders`} key="4">
-                            <EditableTable2
+                            <EditableTableSelect
                                 className="users-table"
                                 dataSource={this.state.userArray}
                                 columns={userColumns}
                                 handleSave={this.handleSave}
-                                options={options}
-                                scroll={{ x: '100%' }}
-                            ></EditableTable2>
+                            ></EditableTableSelect>
 
                             {/*<Table className="users-table"*/}
                                    {/*dataSource={this.state.userArray}*/}

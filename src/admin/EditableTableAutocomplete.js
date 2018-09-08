@@ -1,6 +1,6 @@
-import {Table, Select, Button, Popconfirm, Form, AutoComplete} from 'antd';
+import {Table, Form, AutoComplete} from 'antd';
 import React, { Component } from 'react';
-import EditableTable from "./EditableTable";
+import {INPUT_TEXT, VALIDATION_TEXT} from '../constants/Texts';
 
 const FormItem = Form.Item;
 const EditableContext = React.createContext();
@@ -12,7 +12,6 @@ const EditableRow = ({ form, index, ...props }) => (
 );
 
 const EditableFormRow = Form.create()(EditableRow);
-const Option = Select.Option;
 
 class EditableCell extends Component {
     state = {
@@ -57,7 +56,7 @@ class EditableCell extends Component {
             console.log(values);
             handleSave({...record, ...values});
         });
-    }
+    };
 
     render() {
         const {editing} = this.state;
@@ -83,20 +82,18 @@ class EditableCell extends Component {
                                         {form.getFieldDecorator(dataIndex, {
                                             rules: [{
                                                 required: true,
-                                                message: `${title} is required.`,
+                                                message: `${title} ${VALIDATION_TEXT}`,
                                             }],
                                         })(
-                                            <Select
-                                                onSelect={this.save}
-
+                                            <AutoComplete
                                                 ref={node => (this.input = node)}
-                                                style={{width: 120}}>
-                                                {
-                                                    options.map(element => {
-                                                    return <Option value={element}> {element}</Option>
-                                                    })
-                                                }
-                                            </Select>
+                                                dataSource={options}
+                                                style={{width: 200}}
+                                                filterOption={(inputValue, option) => option.props.children.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
+                                                onSelect={this.save}
+                                                // onSearch={this.handleSearch}
+                                                placeholder={INPUT_TEXT}
+                                            />
                                         )}
                                     </FormItem>
                                 ) : (
@@ -117,7 +114,7 @@ class EditableCell extends Component {
     }
 }
 
-class EditableTableSelect extends Component {
+class EditableTableAutocomplete extends Component {
     constructor(props) {
         super(props);
         this.columns = this.props.columns
@@ -136,7 +133,6 @@ class EditableTableSelect extends Component {
     }
 
     render() {
-        const options = ["Basic", "Medium"];
 
         const components = {
             body: {
@@ -175,4 +171,4 @@ class EditableTableSelect extends Component {
     }
 }
 
-export default EditableTableSelect
+export default EditableTableAutocomplete

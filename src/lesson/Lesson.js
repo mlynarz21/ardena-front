@@ -1,14 +1,21 @@
 import React, { Component } from 'react';
 import './Lesson.css';
-import {Alert, Divider, Popconfirm, Table} from 'antd';
+import {Alert, Button, Divider, Popconfirm, Table} from 'antd';
 import LoadingIndicator  from '../common/LoadingIndicator';
 import NotFound from '../common/NotFound';
 import ServerError from '../common/ServerError';
-import {acceptReservation, cancelReservation, deleteLesson, getLesson, payForReservation} from "../util/APIUtils";
+import {
+    acceptReservation, addHorse, cancelReservation, getAllHorses, getInstructors, getLesson,
+    payForReservation, updateLesson, updateReservation
+} from "../util/APIUtils";
 import {isInstructor} from "../constants";
 import withRouter from "react-router-dom/es/withRouter";
 import {Link} from "react-router-dom";
 import {notification} from "antd/lib/index";
+import EditableTableAutocomplete from "../admin/EditableTableAutocomplete";
+import AddHorseForm from "../horse/AddHorseForm";
+import EditLessonForm from "./EditLessonForm";
+import moment from "moment";
 
 class Lesson extends Component {
 
@@ -16,13 +23,18 @@ class Lesson extends Component {
         super(props);
         this.state = {
             isLoading: true,
-            lesson: null
+            lesson: null,
+            horseArray: [],
+            instructorArray: [],
+            visible: false,
         }
     }
 
     componentDidMount() {
         const lessonId = this.props.match.params.lessonId;
         this.loadLesson(lessonId);
+        this.loadHorseArray();
+        this.loadInstructorArray();
     }
 
     loadLesson(lessonId) {
@@ -31,6 +43,27 @@ class Lesson extends Component {
                 {
                     isLoading: false,
                     lesson: response
+                }
+            )
+        })
+    }
+
+    loadHorseArray() {
+        getAllHorses().then(response => {
+            this.setState(
+                {
+                    // isLoading: false,
+                    horseArray: response
+                }
+            )
+        })
+    }
+
+    loadInstructorArray() {
+        getInstructors().then(response => {
+            this.setState(
+                {
+                    instructorArray: response
                 }
             )
         })
@@ -66,6 +99,60 @@ class Lesson extends Component {
         });
     }
 
+    showModal = () => {
+        this.setState({visible: true});
+    };
+
+    handleCancel = () => {
+        const form = this.formRef.props.form;
+        this.setState({visible: false});
+        form.resetFields();
+    };
+
+    handleCreate = () => {
+        const form = this.formRef.props.form;
+        form.validateFields((err, values) => {
+            if (err) {
+                return;
+            }
+            console.log(values);
+            updateLesson(
+                this.props.match.params.lessonId,
+                {
+                    lessonLevel : values.lessonLevel,
+                    instructor : values.instructor.split(" ")[0],
+                    date : this.state.lesson.date
+                }).then(response => {
+                notification.success({
+                    message: 'Ardena',
+                    description: response.message,
+                });
+                this.loadLesson(this.props.match.params.lessonId)
+            }).catch(error => {
+                notification.error({
+                    message: 'Ardena',
+                    description: error.message || 'Sorry! Something went wrong. Please try again!'
+                });
+            });
+
+            form.resetFields();
+            this.setState({visible: false});
+
+            this.loadLesson(this.props.match.params.lessonId);
+        });
+    };
+
+    saveFormRef = (formRef) => {
+        this.formRef = formRef;
+    };
+
+    renderHorse(record) {
+        if (record.horse === null) {
+            return "No horse"
+        }
+        else return record.horse.horseName
+    }
+
     renderPopconfirm(record) {
         if (record.status === "Pending") {
             return (
@@ -95,14 +182,14 @@ class Lesson extends Component {
                 </Popconfirm>
                 <Divider type="vertical"/>
                 <Popconfirm placement="left" title="Want to pay for this lesson? (pass)" onConfirm={() => {
-                    this.payReservation(record.id,{status: "Paid_pass"});
+                    this.payReservation(record.id, {status: "Paid_pass"});
                 }}
                             okText="Yes" cancelText="No">
                     <a>Pay with pass</a>
                 </Popconfirm>
                 <Divider type="vertical"/>
                 <Popconfirm placement="left" title="Want to pay for this lesson? (cash)" onConfirm={() => {
-                    this.payReservation(record.id,{status: "Paid_cash"});
+                    this.payReservation(record.id, {status: "Paid_cash"});
                 }}
                             okText="Yes" cancelText="No">
                     <a>Pay with cash</a>
@@ -111,7 +198,7 @@ class Lesson extends Component {
         }
     }
 
-    payReservation(reservationId, data){
+    payReservation(reservationId, data) {
         payForReservation(reservationId, data).then(response => {
             notification.success({
                 message: 'Ardena',
@@ -125,6 +212,22 @@ class Lesson extends Component {
             });
         })
     }
+
+    handleSave = (row) => {
+        updateReservation(row.id,
+            {status: row.status, rider: row.rider, horseName: row.horse.horseName}).then(response => {
+            notification.success({
+                message: 'Ardena',
+                description: response.message,
+            });
+            this.loadLesson(this.props.match.params.lessonId)
+        }).catch(error => {
+            notification.error({
+                message: 'Ardena',
+                description: error.message || 'Sorry! Something went wrong. Please try again!'
+            });
+        })
+    };
 
     render() {
         if (this.state.isLoading) {
@@ -150,11 +253,11 @@ class Lesson extends Component {
             key: 'status',
             width: '15%',
             filters: [
-                { text: 'Cancelled', value: 'Cancelled' },
-                { text: 'Pending', value: 'Pending' },
-                { text: 'Confirmed', value: 'Confirmed' },
-                { text: 'Paid_pass', value: 'Paid_pass' },
-                { text: 'Paid_cash', value: 'Paid_cash' },
+                {text: 'Cancelled', value: 'Cancelled'},
+                {text: 'Pending', value: 'Pending'},
+                {text: 'Confirmed', value: 'Confirmed'},
+                {text: 'Paid_pass', value: 'Paid_pass'},
+                {text: 'Paid_cash', value: 'Paid_cash'},
             ],
             onFilter: (value, record) => record.status.indexOf(value) === 0
         }, {
@@ -166,11 +269,15 @@ class Lesson extends Component {
                     {record.rider.name}
                 </Link>),
             sorter: (a, b) => ('' + a.rider.name).localeCompare(b.rider.name)
-    }, {
+        }, {
             title: 'Horse',
-            dataIndex: 'horse',
+            dataIndex: 'horse.horseName',
             key: 'horse',
-            width: '20%'
+            width: '20%',
+            editable: true,
+            render: (text, record) => (
+                this.renderHorse(record)
+            )
         }, {
             title: 'Action',
             key: 'action',
@@ -184,24 +291,48 @@ class Lesson extends Component {
             return (
                 <div className="lesson-container">
                     <div className="flex-alert">
+                        <Alert className="lesson-info-date"
+                               message={`Date: ${this.state.lesson.date}`}/>
                         <Link className="user-link" to={`/users/${this.state.lesson.instructor.username}`}>
                             <Alert className="lesson-info-instructor"
                                    message={`Instructor: ${this.state.lesson.instructor.name}`}/>
                         </Link>
-                        <Alert className="lesson-info-date"
-                               message={`Date: ${this.state.lesson.date}`}/>
                         <Alert className="lesson-info-level"
-                               message={`Level: ${this.state.lesson.lessonLevel}`}/>
+                               message={`Lesson level: ${this.state.lesson.lessonLevel}`}/>
                     </div>
-                    <Table className="reservations-table"
-                           dataSource={this.state.lesson.reservations}
-                           columns={reservationColumns}
-                           rowKey='id'
-                           rowClassName="lesson-row"
-                        // scroll={{ x: '100%', y: '100%' }}
-                        // pagination={false}
-                    />
+                    {/*<Table className="reservations-table"*/}
+                    {/*dataSource={this.state.lesson.reservations}*/}
+                    {/*columns={reservationColumns}*/}
+                    {/*rowKey='id'*/}
+                    {/*rowClassName="lesson-row"*/}
+                    {/*// scroll={{ x: '100%', y: '100%' }}*/}
+                    {/*// pagination={false}*/}
+                    {/*/>*/}
 
+                    <div className="reservation-list">
+                        <EditableTableAutocomplete
+                            className="reservations-table"
+                            dataSource={this.state.lesson.reservations}
+                            columns={reservationColumns}
+                            handleSave={this.handleSave}
+                            options={this.state.horseArray.map(horse => horse.horseName)}
+                            // scroll={{ x: '100%' }}
+                        ></EditableTableAutocomplete>
+
+                        <Button type="primary"
+                                className={this.state.lesson.reservations.length > 0 ? 'edit-lesson-button' : 'edit-lesson-button-no-data'}
+                                onClick={this.showModal}>
+                            Edit lesson</Button>
+                    </div>
+
+                    <EditLessonForm
+                        wrappedComponentRef={this.saveFormRef}
+                        visible={this.state.visible}
+                        onCancel={this.handleCancel}
+                        onCreate={this.handleCreate}
+                        lesson={this.state.lesson}
+                        dataSource={this.state.instructorArray.map(i=> i.username+' ('+i.name+')')}
+                    />
                 </div>);
         } else return (
             <div className="lesson-container">

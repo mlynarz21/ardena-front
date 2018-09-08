@@ -12,6 +12,7 @@ import {
 } from "../../util/APIUtils";
 import {notification} from "antd/lib/index";
 import {Link, withRouter} from 'react-router-dom';
+import {LevelOptions} from "../../constants";
 
 const TabPane = Tabs.TabPane;
 
@@ -300,12 +301,7 @@ class LessonList extends Component {
             dataIndex: 'lesson.lessonLevel',
             key: 'lessonLevel',
             width: '10%',
-            filters: [
-                { text: 'Basic', value: 'Basic' },
-                { text: 'Medium', value: 'Medium' },
-                { text: 'Advanced', value: 'Advanced' },
-                { text: 'Sport', value: 'Sport' },
-            ],
+            filters: LevelOptions.map(element => ({text: element, value: element})),
             onFilter: (value, record) => record.lesson.lessonLevel.indexOf(value) === 0
         }, {
             title: 'Date',

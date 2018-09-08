@@ -1,6 +1,7 @@
 import {Table, Select, Button, Popconfirm, Form, AutoComplete} from 'antd';
 import React, { Component } from 'react';
 import EditableTable from "./EditableTable";
+import {LevelOptions} from "../constants";
 
 const FormItem = Form.Item;
 const EditableContext = React.createContext();
@@ -68,7 +69,6 @@ class EditableCell extends Component {
             record,
             index,
             handleSave,
-            options,
             ...restProps,
         } = this.props;
         return (
@@ -92,8 +92,8 @@ class EditableCell extends Component {
                                                 ref={node => (this.input = node)}
                                                 style={{width: 120}}>
                                                 {
-                                                    options.map(element => {
-                                                    return <Option value={element}> {element}</Option>
+                                                    LevelOptions.map(element => {
+                                                        return <Option value={element}> {element}</Option>
                                                     })
                                                 }
                                             </Select>
@@ -117,6 +117,7 @@ class EditableCell extends Component {
     }
 }
 
+
 class EditableTableSelect extends Component {
     constructor(props) {
         super(props);
@@ -136,8 +137,6 @@ class EditableTableSelect extends Component {
     }
 
     render() {
-        const options = ["Basic", "Medium"];
-
         const components = {
             body: {
                 row: EditableFormRow,
@@ -156,7 +155,6 @@ class EditableTableSelect extends Component {
                     dataIndex: col.dataIndex,
                     title: col.title,
                     handleSave: this.props.handleSave,
-                    options: this.props.options
                 }),
             };
         });

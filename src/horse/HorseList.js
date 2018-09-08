@@ -17,7 +17,6 @@ class HorseList extends Component {
             isLoading: true,
             horseArray: [],
             visible: false,
-            buttonClass : ""
         }
     }
 

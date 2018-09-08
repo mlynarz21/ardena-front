@@ -1,5 +1,6 @@
 import { Select, DatePicker, TimePicker, Modal, Form} from 'antd';
 import * as React from "react";
+import {LevelOptions} from "../../constants";
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -11,6 +12,7 @@ const AddLessonForm = Form.create()(
             const format = 'HH:mm';
             const {visible, onCancel, onCreate, form} = this.props;
             const {getFieldDecorator} = form;
+
             return (
                 <Modal
                     visible={visible}
@@ -28,12 +30,13 @@ const AddLessonForm = Form.create()(
                                     <DatePicker/>
                                 )}
                             </FormItem>
-                            <FormItem className="time-picker" label="Lesson hour">
+                            <FormItem style={{marginLeft: 20}} className="time-picker" label="Lesson hour">
                                 {getFieldDecorator('time', {
                                     rules: [{required: true, message: 'Please pick the time!'}],
                                 })(
-                                    <TimePicker minuteStep={15} format={format}/>
-
+                                    <TimePicker
+                                        minuteStep={15}
+                                        format={format}/>
                                 )}
                             </FormItem>
                         </div>
@@ -41,11 +44,12 @@ const AddLessonForm = Form.create()(
                             {getFieldDecorator('level', {
                                 rules: [{required: true, message: 'Please pick lesson level!'}],
                             })(
-                                <Select defaultValue="Basic" style={{width: 120}}>
-                                    <Option value="Basic">Basic</Option>
-                                    <Option value="Medium">Medium</Option>
-                                    <Option value="Advanced">Advanced</Option>
-                                    <Option value="Sport">Sport</Option>
+                                <Select style={{width: 120}}>
+                                    {
+                                        LevelOptions.map(element => {
+                                            return <Option value={element}> {element}</Option>
+                                        })
+                                    }
                                 </Select>
                             )}
                         </FormItem>

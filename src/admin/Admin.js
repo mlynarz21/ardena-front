@@ -99,9 +99,6 @@ class Admin extends Component {
             }
             const username = values.user.split(" ")[0]
 
-            console.log(username);
-            console.log(this.state.activeKey);
-
             this.addPrivileges(username,this.getPrivilageRequest());
 
             form.resetFields();
