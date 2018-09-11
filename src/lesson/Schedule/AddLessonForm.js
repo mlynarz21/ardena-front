@@ -1,12 +1,18 @@
 import { Select, DatePicker, TimePicker, Modal, Form} from 'antd';
 import * as React from "react";
 import {LevelOptions} from "../../constants";
+import moment from "moment";
 
 const FormItem = Form.Item;
 const Option = Select.Option;
 
 const AddLessonForm = Form.create()(
+
     class extends React.Component {
+
+        disabledDate(current) {
+            return current && current < moment().endOf('day').subtract(1, 'd');
+        }
 
         render() {
             const format = 'HH:mm';
@@ -27,7 +33,9 @@ const AddLessonForm = Form.create()(
                                 {getFieldDecorator('date', {
                                     rules: [{required: true, message: 'Please pick the date!'}],
                                 })(
-                                    <DatePicker/>
+                                    <DatePicker
+                                        disabledDate={this.disabledDate}
+                                    />
                                 )}
                             </FormItem>
                             <FormItem style={{marginLeft: 20}} className="time-picker" label="Lesson hour">
