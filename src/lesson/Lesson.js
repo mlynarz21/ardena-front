@@ -16,6 +16,7 @@ import EditableTableAutocomplete from "../admin/EditableTableAutocomplete";
 import AddHorseForm from "../horse/AddHorseForm";
 import EditLessonForm from "./EditLessonForm";
 import moment from "moment";
+import {formatDateTime} from "../util/Helpers";
 
 class Lesson extends Component {
 
@@ -292,7 +293,7 @@ class Lesson extends Component {
                 <div className="lesson-container">
                     <div className="flex-alert">
                         <Alert className="lesson-info-date"
-                               message={`Date: ${this.state.lesson.date}`}/>
+                               message={`Date: ${formatDateTime(this.state.lesson.date)}`}/>
                         <Link className="user-link" to={`/users/${this.state.lesson.instructor.username}`}>
                             <Alert className="lesson-info-instructor"
                                    message={`Instructor: ${this.state.lesson.instructor.name}`}/>
@@ -342,7 +343,7 @@ class Lesson extends Component {
                                message={`Instructor: ${this.state.lesson.instructor.name}`}/>
                     </Link>
                     <Alert className="lesson-info"
-                           message={`Date: ${this.state.lesson.date}`}/>
+                           message={`Date: ${formatDateTime(this.state.lesson.date)}`}/>
                     <Alert className="lesson-info"
                            message={`Level: ${this.state.lesson.lessonLevel}`}/>
                 </div>

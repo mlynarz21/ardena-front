@@ -13,6 +13,7 @@ import {
 import {notification} from "antd/lib/index";
 import AddPrivilegesForm from "./AddPrivilegesForm";
 import EditableTable from "./EditableTable";
+import moment from "moment";
 
 const TabPane = Tabs.TabPane;
 
@@ -28,6 +29,8 @@ class Admin extends Component {
             visible: false,
             activeKey: 1
         }
+        console.log(moment().toISOString())
+        console.log(moment())
     }
 
     componentDidMount() {

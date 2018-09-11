@@ -13,6 +13,7 @@ import {
 import {notification} from "antd/lib/index";
 import {Link, withRouter} from 'react-router-dom';
 import {LevelOptions} from "../../constants";
+import {formatDateTimeShort, getIsoStringFromDate} from "../../util/Helpers";
 
 const TabPane = Tabs.TabPane;
 
@@ -112,7 +113,7 @@ class LessonList extends Component {
             value: value,
             selectedValue: value.format('YYYY-MM-DD'),
         });
-        this.loadLessonArray({date: value.format('YYYY-MM-DD') + ' 00:00'});
+        this.loadLessonArray({date: getIsoStringFromDate(value)});
     };
 
     onPanelChange = (value) => {
@@ -131,7 +132,7 @@ class LessonList extends Component {
             });
             this.props.history.push("/lessons");
             this.loadReservationArray();
-            this.loadLessonArray({date: this.state.selectedValue + ' 00:00'});
+            this.loadLessonArray({date: getIsoStringFromDate(this.state.value)});
         }).catch(error => {
             notification.error({
                 message: 'Ardena',
@@ -148,7 +149,7 @@ class LessonList extends Component {
             });
             this.props.history.push("/lessons");
             this.loadReservationArray();
-            this.loadLessonArray({date: this.state.selectedValue + ' 00:00'});
+            this.loadLessonArray({date: getIsoStringFromDate(this.state.value)});
         }).catch(error => {
             notification.error({
                 message: 'Ardena',
@@ -213,9 +214,11 @@ class LessonList extends Component {
             width: '15%'
         }, {
             title: 'Date',
-            dataIndex: 'date',
             key: 'date',
-            width: '25%'
+            width: '25%',
+            render: (text, record) => (
+                formatDateTimeShort(record.date)
+            )
         }, {
             title: 'Instructor',
             key: 'instructor',
@@ -253,9 +256,11 @@ class LessonList extends Component {
             width: '10%'
         }, {
             title: 'Date',
-            dataIndex: 'lesson.date',
             key: 'date',
-            width: '20%'
+            width: '20%',
+            render: (text, record) => (
+                formatDateTimeShort(record.lesson.date)
+            )
         }, {
             title: 'Instructor',
             key: 'instructor',
@@ -305,9 +310,11 @@ class LessonList extends Component {
             onFilter: (value, record) => record.lesson.lessonLevel.indexOf(value) === 0
         }, {
             title: 'Date',
-            dataIndex: 'lesson.date',
             key: 'date',
             width: '20%',
+            render: (text, record) => (
+                formatDateTimeShort(record.lesson.date)
+            ),
             sorter: (a, b) => moment(a.lesson.date, 'YYYY-MM-DD HH:mm').valueOf()-moment(b.lesson.date, 'YYYY-MM-DD HH:mm').valueOf()
         }, {
             title: 'Instructor',
@@ -363,9 +370,11 @@ class LessonList extends Component {
             width: '10%'
         }, {
             title: 'Date',
-            dataIndex: 'lesson.date',
             key: 'date',
-            width: '20%'
+            width: '20%',
+            render: (text, record) => (
+                formatDateTimeShort(record.lesson.date)
+            )
         }, {
             title: 'Instructor',
             key: 'instructor',

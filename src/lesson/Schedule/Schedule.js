@@ -15,6 +15,10 @@ import {notification} from "antd/lib/index";
 import AddLessonForm from "./AddLessonForm";
 import {Link, withRouter} from 'react-router-dom';
 import EditableTableSelect from "../../admin/EditableTableSelect";
+import {
+    formatDateTime, formatDateTimeShort, getIsoStringFromDate,
+    getIsoStringFromDateAndTime
+} from "../../util/Helpers";
 
 const TabPane = Tabs.TabPane;
 
@@ -112,7 +116,7 @@ class Schedule extends Component {
             value: value,
             selectedValue: value.format('YYYY-MM-DD'),
         });
-        this.loadLessonArrayByDate({date: value.format('YYYY-MM-DD') + ' 00:00'});
+        this.loadLessonArrayByDate({date: getIsoStringFromDate(value)});
     };
 
     onPanelChange = (value) => {
@@ -207,9 +211,12 @@ class Schedule extends Component {
             if (err) {
                 return;
             }
+            // const date = moment(values.date);
+            // date.set({ hours: values.time.format('HH'), minutes: values.time.format('mm') });
+
             addLesson({
                 lessonLevel: values.level,
-                date: values.date.format('YYYY-MM-DD') + " " + values.time.format('HH:mm'),
+                date: getIsoStringFromDateAndTime(values.date,  values.time.format('HH'), values.time.format('mm')),
             }).then(response => {
                 notification.success({
                     message: 'Ardena',
@@ -218,7 +225,9 @@ class Schedule extends Component {
                 this.props.history.push("/schedule");
                 if (this.state.selectedValue === "")
                     this.loadLessonArray();
-                else this.loadLessonArrayByDate({date: this.state.selectedValue + ' 00:00'})
+                else {
+                    this.loadLessonArrayByDate({date: getIsoStringFromDate(this.state.value)})
+                }
             }).catch(error => {
                 notification.error({
                     message: 'Ardena',
@@ -295,9 +304,11 @@ class Schedule extends Component {
             width: '25%'
         }, {
             title: 'Date',
-            dataIndex: 'date',
             key: 'date',
-            width: '30%'
+            width: '30%',
+            render: (text, record) => (
+                formatDateTimeShort(record.date)
+            )
         }, {
             title: 'Action',
             key: 'action',
@@ -334,9 +345,11 @@ class Schedule extends Component {
             width: '15%'
         }, {
             title: 'Date',
-            dataIndex: 'lesson.date',
             key: 'date',
-            width: '20%'
+            width: '20%',
+            render: (text, record) => (
+                formatDateTimeShort(record.lesson.date)
+            )
         }, {
             title: 'Action',
             key: 'action',
@@ -413,9 +426,11 @@ class Schedule extends Component {
             width: '15%'
         }, {
             title: 'Date',
-            dataIndex: 'lesson.date',
             key: 'date',
-            width: '20%'
+            width: '20%',
+            render: (text, record) => (
+                formatDateTimeShort(record.lesson.date)
+            )
         }, {
             title: 'Action',
             key: 'action',
