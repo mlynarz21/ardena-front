@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './Schedule.css';
-import {Button, Popconfirm, Table, Tabs, Calendar, Alert, Divider, Icon, Input} from 'antd';
+import {Button, Popconfirm, Table, Tabs, Calendar, Alert, Divider, Icon, Input, Badge} from 'antd';
 import LoadingIndicator  from '../../common/LoadingIndicator';
 import NotFound from '../../common/NotFound';
 import ServerError from '../../common/ServerError';
@@ -14,9 +14,9 @@ import {
 import {notification} from "antd/lib/index";
 import AddLessonForm from "./AddLessonForm";
 import {Link, withRouter} from 'react-router-dom';
-import EditableTableSelect from "../../admin/EditableTableSelect";
+import EditableTableSelect from "../../EditableTables/EditableTableSelect";
 import {
-    formatDateTime, formatDateTimeShort, getIsoStringFromDate,
+    formatDateTime, formatDateTimeShort, formatDateToDMY, getIsoStringFromDate,
     getIsoStringFromDateAndTime
 } from "../../util/Helpers";
 
@@ -31,6 +31,7 @@ class Schedule extends Component {
             value: moment().subtract(1, 'd'),
             selectedValue: "",
             lessonArray: [],
+            lessonByDateArray: [],
             pendingReservationArray: [],
             visible: false,
             pendingPaymentArray: [],
@@ -73,7 +74,7 @@ class Schedule extends Component {
             this.setState(
                 {
                     isLoading: false,
-                    lessonArray: response
+                    lessonByDateArray: response
                 }
             )
         })
@@ -151,6 +152,9 @@ class Schedule extends Component {
             });
             this.props.history.push("/schedule");
             this.loadLessonArray();
+            if (this.state.selectedValue !== "")
+                this.loadLessonArrayByDate({date: getIsoStringFromDate(this.state.value)});
+
         }).catch(error => {
             notification.error({
                 message: 'Ardena',
@@ -223,11 +227,10 @@ class Schedule extends Component {
                     description: response.message,
                 });
                 this.props.history.push("/schedule");
-                if (this.state.selectedValue === "")
-                    this.loadLessonArray();
-                else {
-                    this.loadLessonArrayByDate({date: getIsoStringFromDate(this.state.value)})
-                }
+                this.loadLessonArray();
+                if (this.state.selectedValue !== "")
+                    this.loadLessonArrayByDate({date: getIsoStringFromDate(this.state.value)});
+
             }).catch(error => {
                 notification.error({
                     message: 'Ardena',
@@ -260,7 +263,6 @@ class Schedule extends Component {
         })
     };
 
-
     render() {
 
         if (this.state.isLoading) {
@@ -283,6 +285,25 @@ class Schedule extends Component {
         let handleReset = clearFilters => () => {
             clearFilters();
             this.setState({userFilterText: ''});
+        };
+
+        let dateCellRender = (value) =>{
+            var listData =[];
+            this.state.lessonArray.some(function (lesson) {
+                if (formatDateToDMY(lesson.date)===formatDateToDMY(value)) {
+                    return listData.push({ type: 'success'});
+                }
+            });
+
+            return (
+                <ul className="events">
+                    {
+                        listData.map(item => (
+                            <Badge status={item.type} text={item.content} />
+                        ))
+                    }
+                </ul>
+            );
         };
 
         const tabBarStyle = {
@@ -548,11 +569,12 @@ class Schedule extends Component {
                                               onPanelChange={this.onPanelChange}
                                               disabledDate={this.disabledDate}
                                               fullscreen={false}
+                                              dateCellRender={dateCellRender}
                                     />
                                 </div>
                                 <div className="lesson-container">
                                     <Table className="schedule-lesson-table"
-                                           dataSource={this.state.lessonArray}
+                                           dataSource={this.state.selectedValue===""?this.state.lessonByDateArray:this.state.lessonByDateArray}
                                            columns={lessonColumns}
                                            rowKey='id'
                                            rowClassName="lesson-row"
@@ -560,7 +582,10 @@ class Schedule extends Component {
                                         // pagination={false}
                                     />
                                     <Button type="primary"
-                                            className={this.state.lessonArray.length > 0 ? 'add-lesson-button' : 'add-lesson-button-no-data'}
+                                            className={
+                                                this.state.lessonByDateArray.length > 0
+                                                && this.state.selectedValue===""
+                                                || this.state.lessonByDateArray.length > 0 ? 'add-lesson-button' : 'add-lesson-button-no-data'}
                                             onClick={this.showModal}>
                                         Add lesson</Button>
                                 </div>

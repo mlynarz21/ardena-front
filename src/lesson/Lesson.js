@@ -12,7 +12,7 @@ import {isInstructor} from "../constants";
 import withRouter from "react-router-dom/es/withRouter";
 import {Link} from "react-router-dom";
 import {notification} from "antd/lib/index";
-import EditableTableAutocomplete from "../admin/EditableTableAutocomplete";
+import EditableTableAutocomplete from "../EditableTables/EditableTableAutocomplete";
 import AddHorseForm from "../horse/AddHorseForm";
 import EditLessonForm from "./EditLessonForm";
 import moment from "moment";

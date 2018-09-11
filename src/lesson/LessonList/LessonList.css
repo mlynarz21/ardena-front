@@ -26,3 +26,17 @@
 .ant-radio-group-small{
     visibility: hidden;
 }
+
+.events {
+    list-style: none;
+    margin-right: -6px;
+    margin-bottom: 3px;
+    padding: 0;
+}
+
+.events .ant-badge-status {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+    text-overflow: ellipsis;
+}

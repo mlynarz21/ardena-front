@@ -12,7 +12,7 @@ import {
 } from "../util/APIUtils";
 import {notification} from "antd/lib/index";
 import AddPrivilegesForm from "./AddPrivilegesForm";
-import EditableTable from "./EditableTable";
+import EditableTable from "../EditableTables/EditableTable";
 import moment from "moment";
 
 const TabPane = Tabs.TabPane;

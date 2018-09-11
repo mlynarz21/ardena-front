@@ -12,6 +12,10 @@ export function formatDateTimeShort(dateTimeString) {
     return moment(dateTimeString).format('DD-MM-YYYY HH:mm');
 }
 
+export function formatDateToDMY(dateTimeString) {
+    return moment(dateTimeString).format('DD-MM-YYYY');
+}
+
 export function getIsoStringFromDateAndTime(givenDate ,hour, minute) {
     const date = moment(givenDate);
     date.set({ hours: hour, minutes: minute });

@@ -1,19 +1,21 @@
 import React, { Component } from 'react';
 import './LessonList.css';
-import { Popconfirm, Table, Tabs, Calendar, Alert } from 'antd';
+import {Popconfirm, Table, Tabs, Calendar, Alert, Badge} from 'antd';
 import LoadingIndicator  from '../../common/LoadingIndicator';
 import NotFound from '../../common/NotFound';
 import ServerError from '../../common/ServerError';
 import * as moment from "moment";
 import {
-    addReservation, cancelReservation, getAllHorses, getInstructors, getLessonsByDateAndUser,
+    addReservation, cancelReservation, getAllComingLessons, getAllHorses, getAllLessons, getInstructors,
+    getLessonsByDateAndUser,
+    getLessonsByInstructor,
     getUnpaidReservationsByUser, getUserReservationHistory,
     getUserReservations, payForReservation
 } from "../../util/APIUtils";
 import {notification} from "antd/lib/index";
 import {Link, withRouter} from 'react-router-dom';
 import {LevelOptions} from "../../constants";
-import {formatDateTimeShort, getIsoStringFromDate} from "../../util/Helpers";
+import {formatDateTimeShort, formatDateToDMY, getIsoStringFromDate} from "../../util/Helpers";
 
 const TabPane = Tabs.TabPane;
 
@@ -25,6 +27,7 @@ class LessonList extends Component {
             value: moment().subtract(1, 'd'),
             isLoading: true,
             selectedValue: "",
+            lessonByDateArray: [],
             lessonArray: [],
             reservationArray: [],
             reservationHistoryArray: [],
@@ -40,14 +43,26 @@ class LessonList extends Component {
         this.loadHorseArray();
         this.loadInstructorArray();
         this.loadPendingPaymentArray();
+        this.loadLessonArray();
     }
 
-    loadLessonArray(date) {
-        getLessonsByDateAndUser(date).then(response => {
+    loadLessonArray() {
+        getAllComingLessons().then(response => {
             this.setState(
                 {
                     isLoading: false,
                     lessonArray: response
+                }
+            )
+        })
+    }
+
+    loadLessonArrayByDate(date) {
+        getLessonsByDateAndUser(date).then(response => {
+            this.setState(
+                {
+                    isLoading: false,
+                    lessonByDateArray: response
                 }
             )
         })
@@ -113,7 +128,7 @@ class LessonList extends Component {
             value: value,
             selectedValue: value.format('YYYY-MM-DD'),
         });
-        this.loadLessonArray({date: getIsoStringFromDate(value)});
+        this.loadLessonArrayByDate({date: getIsoStringFromDate(value)});
     };
 
     onPanelChange = (value) => {
@@ -132,7 +147,7 @@ class LessonList extends Component {
             });
             this.props.history.push("/lessons");
             this.loadReservationArray();
-            this.loadLessonArray({date: getIsoStringFromDate(this.state.value)});
+            this.loadLessonArrayByDate({date: getIsoStringFromDate(this.state.value)});
         }).catch(error => {
             notification.error({
                 message: 'Ardena',
@@ -149,7 +164,7 @@ class LessonList extends Component {
             });
             this.props.history.push("/lessons");
             this.loadReservationArray();
-            this.loadLessonArray({date: getIsoStringFromDate(this.state.value)});
+            this.loadLessonArrayByDate({date: getIsoStringFromDate(this.state.value)});
         }).catch(error => {
             notification.error({
                 message: 'Ardena',
@@ -194,6 +209,25 @@ class LessonList extends Component {
         if (this.state.serverError) {
             return <ServerError/>;
         }
+
+        let dateCellRender = (value) =>{
+            var listData =[];
+            this.state.lessonArray.some(function (lesson) {
+                if (formatDateToDMY(lesson.date)===formatDateToDMY(value)) {
+                    return listData.push({ type: 'success'});
+                }
+            });
+
+            return (
+                <ul className="events">
+                    {
+                        listData.map(item => (
+                            <Badge status={item.type} text={item.content} />
+                        ))
+                    }
+                </ul>
+            );
+        };
 
         const tabBarStyle = {
             textAlign: 'center'
@@ -416,10 +450,11 @@ class LessonList extends Component {
                                               onPanelChange={this.onPanelChange}
                                               disabledDate={this.disabledDate}
                                               fullscreen={false}
+                                              dateCellRender={dateCellRender}
                                     />
                                 </div>
                                 <Table className="lesson-table"
-                                       dataSource={this.state.lessonArray}
+                                       dataSource={this.state.lessonByDateArray}
                                        columns={lessonColumns}
                                        rowKey='id'
                                        rowClassName="lesson-row"

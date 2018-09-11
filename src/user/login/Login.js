@@ -36,9 +36,6 @@ class LoginForm extends Component {
                 .then(response => {
                     localStorage.setItem(ACCESS_TOKEN, response.accessToken);
                     localStorage.setItem(isInstructor, response.roles.map(role => role.name).includes('ROLE_INSTRUCTOR'));
-                    // localStorage.setItem(isAdmin, response.roles.map(role => role.name).includes('ROLE_ADMIN'));
-                    console.log(response.roles.map(role => role.name).includes('ROLE_INSTRUCTOR'));
-                    console.log(localStorage.getItem(isInstructor));
                     localStorage.setItem(isAdmin, response.roles.map(role => role.name).includes('ROLE_ADMIN'));
                     this.props.onLogin();
                 }).catch(error => {

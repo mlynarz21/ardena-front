@@ -49,6 +49,14 @@ export function getAllLessons() {
     });
 }
 
+export function getAllComingLessons() {
+
+    return request({
+        url: API_BASE_URL + "/lessons/coming",
+        method: 'GET'
+    });
+}
+
 export function addReservation(lessonId) {
     return request({
         url: API_BASE_URL + "/reservations/lesson/" + lessonId,
