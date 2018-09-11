@@ -23,16 +23,6 @@ const request = (options) => {
     );
 };
 
-export function getAllPolls(page, size) {
-    page = page || 0;
-    size = size || POLL_LIST_SIZE;
-
-    return request({
-        url: API_BASE_URL + "/polls?page=" + page + "&size=" + size,
-        method: 'GET'
-    });
-}
-
 export function getAllHorses() {
 
     return request({
@@ -190,14 +180,6 @@ export function getPass(username) {
     });
 }
 
-export function createPoll(pollData) {
-    return request({
-        url: API_BASE_URL + "/polls",
-        method: 'POST',
-        body: JSON.stringify(pollData)         
-    });
-}
-
 export function addHorse(horseData) {
     return request({
         url: API_BASE_URL + "/horses",
@@ -247,14 +229,6 @@ export function acceptReservation(reservationId) {
     return request({
         url: API_BASE_URL + "/reservations/accept/" + reservationId,
         method: 'PATCH',
-    });
-}
-
-export function castVote(voteData) {
-    return request({
-        url: API_BASE_URL + "/polls/" + voteData.pollId + "/votes",
-        method: 'POST',
-        body: JSON.stringify(voteData)
     });
 }
 
@@ -354,17 +328,43 @@ export function getUserProfile(username) {
     });
 }
 
-export function getUserCreatedPolls(username, page, size) {
+export function getAllEvents(page, size) {
     page = page || 0;
     size = size || POLL_LIST_SIZE;
 
     return request({
-        url: API_BASE_URL + "/users/" + username + "/polls?page=" + page + "&size=" + size,
+        url: API_BASE_URL + "/events?page=" + page + "&size=" + size,
         method: 'GET'
     });
 }
 
-export function getUserVotedPolls(username, page, size) {
+export function createEvent(eventData) {
+    return request({
+        url: API_BASE_URL + "/events",
+        method: 'POST',
+        body: JSON.stringify(eventData)
+    });
+}
+
+export function castVote(voteData) {
+    return request({
+        url: API_BASE_URL + "/events/" + voteData.eventId + "/votes",
+        method: 'POST',
+        body: JSON.stringify(voteData)
+    });
+}
+
+export function getUserCreatedEvents(username, page, size) {
+    page = page || 0;
+    size = size || POLL_LIST_SIZE;
+
+    return request({
+        url: API_BASE_URL + "/users/" + username + "/events?page=" + page + "&size=" + size,
+        method: 'GET'
+    });
+}
+
+export function getUserVotedEvents(username, page, size) {
     page = page || 0;
     size = size || POLL_LIST_SIZE;
 

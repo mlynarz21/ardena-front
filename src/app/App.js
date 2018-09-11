@@ -9,8 +9,8 @@ import {
 import { getCurrentUser } from '../util/APIUtils';
 import {isInstructor, ACCESS_TOKEN, isAdmin} from '../constants';
 
-import PollList from '../poll/PollList';
-import NewPoll from '../poll/NewPoll';
+import EventList from '../event/EventList';
+import NewEvent from '../event/NewEvent';
 import Login from '../user/login/Login';
 import Signup from '../user/signup/Signup';
 import Profile from '../user/profile/Profile';
@@ -115,7 +115,7 @@ class App extends Component {
                     <div className="container">
                         <Switch>
                             <Route exact path="/"
-                                   render={(props) => <PollList isAuthenticated={this.state.isAuthenticated}
+                                   render={(props) => <EventList isAuthenticated={this.state.isAuthenticated}
                                                                 currentUser={this.state.currentUser}
                                                                 handleLogout={this.handleLogout} {...props} />}>
                             </Route>
@@ -131,8 +131,8 @@ class App extends Component {
                                    render={(props) => <Profile isAuthenticated={this.state.isAuthenticated}
                                                                currentUser={this.state.currentUser} {...props}  />}>
                             </Route>
-                            <PrivateRoute authenticated={this.state.isAuthenticated} path="/poll/new"
-                                          component={NewPoll} handleLogout={this.handleLogout}></PrivateRoute>
+                            <PrivateRoute authenticated={this.state.isAuthenticated} path="/event/new"
+                                          component={NewEvent} handleLogout={this.handleLogout}></PrivateRoute>
                             <Route component={NotFound}></Route>
                         </Switch>
                     </div>

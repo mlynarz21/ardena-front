@@ -32,11 +32,6 @@ class AppHeader extends Component {
         if (this.props.currentUser) {
             if (localStorage.getItem(isInstructor)==='true') {
                 menuItems = [
-                    //<Menu.Item key="/poll/new">
-                    //    <Link to="/poll/new">
-                    //        <img src={pollIcon} alt="poll" className="poll-icon"/>
-                    //    </Link>
-                    //</Menu.Item>,
                     <Menu.Item key="/">
                         <Link to="/">
                             <img src={homeIcon} alt="home" className="home-icon"/>

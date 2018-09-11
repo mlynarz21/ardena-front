@@ -1,0 +1,24 @@
+.no-events-found {
+    font-size: 20px;
+    text-align: center;
+    padding: 20px;
+}
+
+.load-more-events {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.create-event-div{
+    position: fixed;
+    bottom: 7%;
+    padding-left: 630px;
+}
+
+@media (max-width: 768px) {
+    .create-event-div {
+        position: fixed;
+        bottom: 5%;
+        right: 5%;
+    }
+}
