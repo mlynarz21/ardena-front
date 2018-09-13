@@ -10,6 +10,15 @@ import {
 } from '../../constants';
 
 import { Form, Input, Button, notification } from 'antd';
+import {
+    ALREADY_REGISTERED_TEXT,
+    APP_NAME, EMAIL_TEXT, ERROR_TEXT, FULL_NAME_TEXT, LOGIN_TEXT, PASSWORD_TEXT, REGISTER_NOTIFICATION_TEXT,
+    SAMPLE_MAIL,
+    SAMPLE_NAME, SAMPLE_PASSWORD, SAMPLE_USERNAME,
+    SIGNUP_TEXT,
+    UNAUTHORIZED_TEXT,
+    USER_TEXT, USERNAME_TEXT
+} from "../../constants/Texts";
 const FormItem = Form.Item;
 
 class Signup extends Component {
@@ -28,7 +37,7 @@ class Signup extends Component {
             password: {
                 value: ''
             }
-        }
+        };
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.validateUsernameAvailability = this.validateUsernameAvailability.bind(this);
@@ -61,15 +70,19 @@ class Signup extends Component {
         signup(signupRequest)
             .then(response => {
                 notification.success({
-                    message: 'Ardena',
-                    description: "Thank you! You're successfully registered. Please Login to continue!",
+                    message: APP_NAME,
+                    description: REGISTER_NOTIFICATION_TEXT,
                 });
                 this.props.history.push("/login");
             }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         });
     }
 
@@ -84,22 +97,22 @@ class Signup extends Component {
     render() {
         return (
             <div className="signup-container">
-                <h1 className="page-title">Sign Up</h1>
+                <h1 className="page-title">{SIGNUP_TEXT}</h1>
                 <div className="signup-content">
                     <Form onSubmit={this.handleSubmit} className="signup-form">
                         <FormItem
-                            label="Full Name"
+                            label={FULL_NAME_TEXT}
                             validateStatus={this.state.name.validateStatus}
                             help={this.state.name.errorMsg}>
                             <Input
                                 size="large"
                                 name="name"
                                 autoComplete="off"
-                                placeholder="Your full name"
+                                placeholder={SAMPLE_NAME}
                                 value={this.state.name.value}
                                 onChange={(event) => this.handleInputChange(event, this.validateName)}/>
                         </FormItem>
-                        <FormItem label="Username"
+                        <FormItem label={USERNAME_TEXT}
                                   hasFeedback
                                   validateStatus={this.state.username.validateStatus}
                                   help={this.state.username.errorMsg}>
@@ -107,13 +120,13 @@ class Signup extends Component {
                                 size="large"
                                 name="username"
                                 autoComplete="off"
-                                placeholder="A unique username"
+                                placeholder={SAMPLE_USERNAME}
                                 value={this.state.username.value}
                                 onBlur={this.validateUsernameAvailability}
                                 onChange={(event) => this.handleInputChange(event, this.validateUsername)}/>
                         </FormItem>
                         <FormItem
-                            label="Email"
+                            label={EMAIL_TEXT}
                             hasFeedback
                             validateStatus={this.state.email.validateStatus}
                             help={this.state.email.errorMsg}>
@@ -122,13 +135,13 @@ class Signup extends Component {
                                 name="email"
                                 type="email"
                                 autoComplete="off"
-                                placeholder="Your email"
+                                placeholder={SAMPLE_MAIL}
                                 value={this.state.email.value}
                                 onBlur={this.validateEmailAvailability}
                                 onChange={(event) => this.handleInputChange(event, this.validateEmail)}/>
                         </FormItem>
                         <FormItem
-                            label="Password"
+                            label={PASSWORD_TEXT}
                             validateStatus={this.state.password.validateStatus}
                             help={this.state.password.errorMsg}>
                             <Input
@@ -136,7 +149,7 @@ class Signup extends Component {
                                 name="password"
                                 type="password"
                                 autoComplete="off"
-                                placeholder="A password between 6 to 20 characters"
+                                placeholder={SAMPLE_PASSWORD}
                                 value={this.state.password.value}
                                 onChange={(event) => this.handleInputChange(event, this.validatePassword)}/>
                         </FormItem>
@@ -145,8 +158,8 @@ class Signup extends Component {
                                     htmlType="submit"
                                     size="large"
                                     className="signup-form-button"
-                                    disabled={this.isFormInvalid()}>Sign up</Button>
-                            Already registed? <Link to="/login">Login now!</Link>
+                                    disabled={this.isFormInvalid()}>{SIGNUP_TEXT}</Button>
+                            {ALREADY_REGISTERED_TEXT} <Link to="/login">{LOGIN_TEXT}!</Link>
                         </FormItem>
                     </Form>
                 </div>

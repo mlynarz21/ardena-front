@@ -10,6 +10,7 @@ import NotFound from '../../common/NotFound';
 import ServerError from '../../common/ServerError';
 import Pass from "../../pass/Pass";
 import Event from "../../event/Event";
+import {EVENTS_TEXT, JOINED_TEXT, PASSES_TEXT, RIDER_LEVEL_TEXT, VOTES_TEXT} from "../../constants/Texts";
 
 const TabPane = Tabs.TabPane;
 
@@ -19,7 +20,7 @@ class Profile extends Component {
         this.state = {
             user: null,
             isLoading: false
-        }
+        };
         this.loadUserProfile = this.loadUserProfile.bind(this);
     }
 
@@ -92,10 +93,10 @@ class Profile extends Component {
                                     <div className="full-name">{this.state.user.name}</div>
                                     <div className="username">@{this.state.user.username}</div>
                                     <div className="user-joined">
-                                        Joined {formatDate(this.state.user.joinedAt)}
+                                        {JOINED_TEXT} {formatDate(this.state.user.joinedAt)}
                                     </div>
                                     <div className="user-level">
-                                        <b>Rider level: {this.state.user.level}</b>
+                                        <b>{RIDER_LEVEL_TEXT}: {this.state.user.level}</b>
                                     </div>
                                 </div>
                             </div>
@@ -105,13 +106,13 @@ class Profile extends Component {
                                     tabBarStyle={tabBarStyle}
                                     size="large"
                                     className="profile-tabs">
-                                    <TabPane tab={`${this.state.user.eventCount} Events`} key="1">
+                                    <TabPane tab={`${this.state.user.eventCount} ${EVENTS_TEXT}`} key="1">
                                         <EventList username={this.props.match.params.username} type="USER_CREATED_POLLS" />
                                     </TabPane>
-                                    <TabPane tab={`${this.state.user.voteCount} Votes`}  key="2">
+                                    <TabPane tab={`${this.state.user.voteCount} ${VOTES_TEXT}`}  key="2">
                                         <EventList username={this.props.match.params.username} type="USER_VOTED_POLLS" />
                                     </TabPane>
-                                    <TabPane tab={"Passes"}  key="3">
+                                    <TabPane tab={PASSES_TEXT}  key="3">
                                         <Pass username={this.props.match.params.username}></Pass>
                                     </TabPane>
                                 </Tabs>

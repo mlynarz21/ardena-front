@@ -6,19 +6,30 @@ import NotFound from '../../common/NotFound';
 import ServerError from '../../common/ServerError';
 import * as moment from "moment";
 import {
-    acceptReservation, addLesson, addPass, cancelReservation, deleteHorse,
-    deleteLesson, getAllUsers, getLessonsByDateAndInstructor, getLessonsByInstructor,
+    acceptReservation, addLesson, addPass, cancelReservation, deleteLesson, getAllUsers, getLessonsByDateAndInstructor, getLessonsByInstructor,
     getPendingReservationsByInstructor,
-    getUnpaidReservationsByInstructor, payForReservation, updateHorse, updateUserLevel
+    getUnpaidReservationsByInstructor, payForReservation, updateUserLevel
 } from "../../util/APIUtils";
 import {notification} from "antd/lib/index";
 import AddLessonForm from "./AddLessonForm";
 import {Link, withRouter} from 'react-router-dom';
 import EditableTableSelect from "../../EditableTables/EditableTableSelect";
 import {
-    formatDateTime, formatDateTimeShort, formatDateToDMY, getIsoStringFromDate,
+    formatDateTimeShort, formatDateToDMY, getIsoStringFromDate,
     getIsoStringFromDateAndTime
 } from "../../util/Helpers";
+import {
+    ACCEPT_TEXT,
+    ACTION_TEXT, ADD_PASS_NOTIFICATION_TEXT, ADD_PASS_TEXT,
+    APP_NAME, CANCEL_TEXT, DATE_TEXT, DELETE_LESSON_TEXT, DELETE_TEXT, ERROR_TEXT, INPUT_TEXT, LESSON_LEVEL_TEXT,
+    MY_SCHEDULE_TEXT,
+    NO_TEXT, PASS_TEXT, PAY_CASH_TEXT, PENDING_PAYMENTS_TEXT, PENDING_RESERVATIONS_TEXT,
+    RESERVATION_ACCEPT_TEXT,
+    RESERVATION_CANCEL_TEXT, RESERVATION_PAY_CASH_TEXT, RESERVATION_PAY_PASS_TEXT, RIDER_LEVEL_TEXT,
+    RIDER_NAME_TEXT, RIDERS_TEXT, SELECTED_DATE_TEXT,
+    UNAUTHORIZED_TEXT, USERNAME_TEXT,
+    YES_TEXT
+} from "../../constants/Texts";
 
 const TabPane = Tabs.TabPane;
 
@@ -131,23 +142,27 @@ class Schedule extends Component {
     confirmCancel(reservationId) {
         cancelReservation(reservationId).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
             this.props.history.push("/schedule");
             this.loadPendingReservationArray();
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         });
     }
 
     confirmDeletion(lessonId) {
         deleteLesson(lessonId).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
             this.props.history.push("/schedule");
@@ -156,56 +171,72 @@ class Schedule extends Component {
                 this.loadLessonArrayByDate({date: getIsoStringFromDate(this.state.value)});
 
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         });
     }
 
     confirmAccept(reservationId) {
         acceptReservation(reservationId).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
             this.props.history.push("/schedule");
             this.loadPendingReservationArray();
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         });
     }
 
     payReservation(reservationId, data){
         payForReservation(reservationId, data).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
             this.loadPendingPaymentArray();
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         })
     }
 
     addPassToUser(userId, data){
         addPass(userId, data).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
             this.loadPendingPaymentArray();
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         })
     }
 
@@ -215,15 +246,13 @@ class Schedule extends Component {
             if (err) {
                 return;
             }
-            // const date = moment(values.date);
-            // date.set({ hours: values.time.format('HH'), minutes: values.time.format('mm') });
 
             addLesson({
                 lessonLevel: values.level,
                 date: getIsoStringFromDateAndTime(values.date,  values.time.format('HH'), values.time.format('mm')),
             }).then(response => {
                 notification.success({
-                    message: 'Ardena',
+                    message: APP_NAME,
                     description: response.message,
                 });
                 this.props.history.push("/schedule");
@@ -232,10 +261,14 @@ class Schedule extends Component {
                     this.loadLessonArrayByDate({date: getIsoStringFromDate(this.state.value)});
 
             }).catch(error => {
-                notification.error({
-                    message: 'Ardena',
-                    description: error.message || 'Sorry! Something went wrong. Please try again!'
-                });
+                if(error.status === 401) {
+                    this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+                } else {
+                    notification.error({
+                        message: APP_NAME,
+                        description: error.message || ERROR_TEXT
+                    });
+                }
             });
 
             form.resetFields();
@@ -251,15 +284,19 @@ class Schedule extends Component {
         updateUserLevel(row.id,
             {name:row.name, username:row.username, level:row.level}).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
             this.loadUserArray()
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         })
     };
 
@@ -319,27 +356,27 @@ class Schedule extends Component {
                     {record.id}
                 </Link>)
         }, {
-            title: 'Lesson level',
+            title: LESSON_LEVEL_TEXT,
             dataIndex: 'lessonLevel',
             key: 'lessonLevel',
             width: '25%'
         }, {
-            title: 'Date',
+            title: DATE_TEXT,
             key: 'date',
             width: '30%',
             render: (text, record) => (
                 formatDateTimeShort(record.date)
             )
         }, {
-            title: 'Action',
+            title: ACTION_TEXT,
             key: 'action',
             width: '20%',
             render: (text, record) => (
-                <Popconfirm placement="left" title="Want to delete this lesson?" onConfirm={() => {
+                <Popconfirm placement="left" title={DELETE_LESSON_TEXT} onConfirm={() => {
                     this.confirmDeletion(record.id)
                 }}
-                            okText="Yes" cancelText="No">
-                    <a>Delete</a>
+                            okText={YES_TEXT} cancelText={NO_TEXT}>
+                    <a>{DELETE_TEXT}</a>
                 </Popconfirm>)
         }];
 
@@ -352,7 +389,7 @@ class Schedule extends Component {
                     {record.id}
                 </Link>)
         }, {
-            title: 'Rider name',
+            title: RIDER_NAME_TEXT,
             key: 'name',
             width: '25%',
             render: (text, record) => (
@@ -360,35 +397,35 @@ class Schedule extends Component {
                    {record.rider.name}
                 </Link>)
         }, {
-            title: 'Lesson level',
+            title: LESSON_LEVEL_TEXT,
             dataIndex: 'lesson.lessonLevel',
             key: 'lessonLevel',
             width: '15%'
         }, {
-            title: 'Date',
+            title: DATE_TEXT,
             key: 'date',
             width: '20%',
             render: (text, record) => (
                 formatDateTimeShort(record.lesson.date)
             )
         }, {
-            title: 'Action',
+            title: ACTION_TEXT,
             key: 'action',
             width: '25%',
             render: (text, record) => (
                 <div>
-                    <Popconfirm placement="left" title="Want to accept this reservation?" onConfirm={() => {
+                    <Popconfirm placement="left" title={RESERVATION_ACCEPT_TEXT} onConfirm={() => {
                         this.confirmAccept(record.id)
                     }}
-                                okText="Yes" cancelText="No">
-                        <a>Accept </a>
+                                okText={YES_TEXT} cancelText={NO_TEXT}>
+                        <a>{ACCEPT_TEXT} </a>
                     </Popconfirm>
                     <Divider type="vertical"/>
-                    <Popconfirm placement="left" title="Want to cancel this lesson?" onConfirm={() => {
+                    <Popconfirm placement="left" title={RESERVATION_CANCEL_TEXT} onConfirm={() => {
                         this.confirmCancel(record.id)
                     }}
-                                okText="Yes" cancelText="No">
-                        <a> Cancel</a>
+                                okText={YES_TEXT} cancelText={NO_TEXT}>
+                        <a> {CANCEL_TEXT}</a>
                     </Popconfirm>
                 </div>)
         }];
@@ -403,7 +440,7 @@ class Schedule extends Component {
                     {record.id}
                 </Link>)
         }, {
-            title: 'Rider name',
+            title: RIDER_NAME_TEXT,
             key: 'rider',
             width: '25%',
             dataIndex: 'rider.name',
@@ -413,7 +450,7 @@ class Schedule extends Component {
                         ref={(input) => {
                             this.searchInput = input;
                         }}
-                        placeholder="Search name"
+                        placeholder={INPUT_TEXT}
                         value={selectedKeys[0]}
                         onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                         onPressEnter={handleSearch(selectedKeys, confirm)}
@@ -441,35 +478,35 @@ class Schedule extends Component {
                     </span>) : <Link className="user-link" to={`/users/${record.rider.username}`}>{text}</Link>;
             }
         }, {
-            title: 'Lesson level',
+            title: LESSON_LEVEL_TEXT,
             dataIndex: 'lesson.lessonLevel',
             key: 'lessonLevel',
             width: '15%'
         }, {
-            title: 'Date',
+            title: DATE_TEXT,
             key: 'date',
             width: '20%',
             render: (text, record) => (
                 formatDateTimeShort(record.lesson.date)
             )
         }, {
-            title: 'Action',
+            title: ACTION_TEXT,
             key: 'action',
             width: '25%',
             render: (text, record) => (
                 <div>
-                    <Popconfirm placement="left" title="Want to pay for this lesson? (pass)" onConfirm={() => {
+                    <Popconfirm placement="left" title={RESERVATION_PAY_PASS_TEXT} onConfirm={() => {
                         this.payReservation(record.id,{status: "Paid_pass"});
                     }}
-                                okText="Yes" cancelText="No">
-                        <a>Pay with pass</a>
+                                okText={YES_TEXT} cancelText={NO_TEXT}>
+                        <a>{PASS_TEXT}</a>
                     </Popconfirm>
                     <Divider type="vertical"/>
-                    <Popconfirm placement="left" title="Want to pay for this lesson? (cash)" onConfirm={() => {
+                    <Popconfirm placement="left" title={RESERVATION_PAY_CASH_TEXT} onConfirm={() => {
                         this.payReservation(record.id,{status: "Paid_cash"});
                     }}
-                                okText="Yes" cancelText="No">
-                        <a>Pay with cash</a>
+                                okText={YES_TEXT} cancelText={NO_TEXT}>
+                        <a>{PAY_CASH_TEXT}</a>
                     </Popconfirm>
                 </div>)
         }];
@@ -480,15 +517,7 @@ class Schedule extends Component {
             width: '15%',
             dataIndex: 'id'
         }, {
-        //     title: 'Name',
-        //     key: 'name',
-        //     width: '25%',
-        //     render: (text, record) => (
-        //         <Link className="user-link" to={`/users/${record.username}`}>
-        //             <a>{record.name}</a>
-        //         </Link>)
-        // }, {
-            title: 'Rider name',
+            title: RIDER_NAME_TEXT,
             key: 'name',
             width: '25%',
             dataIndex: 'name',
@@ -498,7 +527,7 @@ class Schedule extends Component {
                         ref={(input) => {
                             this.searchInput = input;
                         }}
-                        placeholder="Search name"
+                        placeholder={INPUT_TEXT}
                         value={selectedKeys[0]}
                         onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                         onPressEnter={handleSearch(selectedKeys, confirm)}
@@ -526,26 +555,26 @@ class Schedule extends Component {
                     </span>) : <Link className="user-link" to={`/users/${record.username}`}>{text}</Link>;
             }
         }, {
-            title: 'Rider level',
+            title: RIDER_LEVEL_TEXT,
             dataIndex: 'level',
             key: 'level',
             width: '15%',
             editable: true
         }, {
-            title: 'Username',
+            title: USERNAME_TEXT,
             dataIndex: 'username',
             key: 'username',
             width: '20%'
         }, {
-            title: 'Action',
+            title: ACTION_TEXT,
             key: 'action',
             width: '25%',
             render: (text, record) => (
-                <Popconfirm placement="left" title="Want add pass to this user?" onConfirm={() => {
+                <Popconfirm placement="left" title={ADD_PASS_NOTIFICATION_TEXT} onConfirm={() => {
                     this.addPassToUser(record.id, {noOfRidesPermitted: 10})
                 }}
-                            okText="Yes" cancelText="No">
-                    <a>Add pass</a>
+                            okText={YES_TEXT} cancelText={NO_TEXT}>
+                    <a>{ADD_PASS_TEXT}</a>
                 </Popconfirm>)
         }];
 
@@ -559,11 +588,11 @@ class Schedule extends Component {
                           size="large"
                           className="lesson-tabs">
 
-                        <TabPane tab={`My schedule`} key="1">
+                        <TabPane tab={MY_SCHEDULE_TEXT} key="1">
                             <div className="flex-container">
                                 <div className="lesson-calendar">
                                     <Alert className="date-alert"
-                                           message={`You selected date: ${this.state.selectedValue}`}/>
+                                           message={`${SELECTED_DATE_TEXT} : ${this.state.selectedValue}`}/>
                                     <Calendar value={this.state.value}
                                               onSelect={this.onSelect}
                                               onPanelChange={this.onPanelChange}
@@ -592,7 +621,7 @@ class Schedule extends Component {
                             </div>
                         </TabPane>
 
-                        <TabPane tab={`Pending reservations`} key="2">
+                        <TabPane tab={PENDING_RESERVATIONS_TEXT} key="2">
                             {/*<div className="flex-container">*/}
                             {/*<div className="reservation-calendar">*/}
                             {/*<Alert className="date-alert"*/}
@@ -616,7 +645,7 @@ class Schedule extends Component {
 
                         </TabPane>
 
-                        <TabPane tab={`Pending payments`} key="3">
+                        <TabPane tab={PENDING_PAYMENTS_TEXT} key="3">
                             <Table className="pending-payments-table"
                                    dataSource={this.state.pendingPaymentArray}
                                    columns={pendingPaymentColumns}
@@ -627,23 +656,14 @@ class Schedule extends Component {
                             />
                         </TabPane>
 
-                        <TabPane tab={`Riders`} key="4">
+                        <TabPane tab={RIDERS_TEXT} key="4">
                             <EditableTableSelect
                                 className="users-table"
                                 dataSource={this.state.userArray}
                                 columns={userColumns}
-                                handleSave={this.handleSave}
-                            ></EditableTableSelect>
+                                handleSave={this.handleSave}>
+                            </EditableTableSelect>
 
-                            {/*<Table className="users-table"*/}
-                                   {/*dataSource={this.state.userArray}*/}
-                                   {/*columns={userColumns}*/}
-                                   {/*rowKey='id'*/}
-                                   {/*rowClassName="lesson-row"*/}
-                                   {/*scroll={{ x: '100%' }}*/}
-                                {/*// scroll={{ x: '100%', y: '100%' }}*/}
-                                {/*// pagination={false}*/}
-                            {/*/>*/}
                         </TabPane>
                     </Tabs>
 

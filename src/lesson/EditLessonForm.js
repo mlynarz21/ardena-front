@@ -2,7 +2,10 @@ import {Modal, Form, Input, Select} from 'antd';
 import * as React from "react";
 import AutoComplete from "antd/es/auto-complete/index";
 import {LevelOptions} from "../constants";
-import {INPUT_TEXT} from '../constants/Texts';
+import {
+    CANCEL_TEXT, EDIT_TEXT, INPUT_TEXT, INSTRUCTOR_TEXT, LESSON_LEVEL_TEXT, LESSON_TEXT,
+    VALIDATION_TEXT
+} from '../constants/Texts';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -16,17 +19,18 @@ const EditLesson = Form.create()(
             return (
                 <Modal
                     visible={visible}
-                    title="Edit Lesson"
-                    okText="Edit"
+                    title={EDIT_TEXT + LESSON_TEXT}
+                    okText={EDIT_TEXT}
+                    cancelText={CANCEL_TEXT}
                     onCancel={onCancel}
                     onOk={onCreate}
                 >
                     <Form layout="vertical">
-                        <FormItem label="Instructor">
+                        <FormItem label={INSTRUCTOR_TEXT}>
                             {getFieldDecorator('instructor', {
                                 rules: [{
                                     required: true,
-                                    message: `Instructor name is required` }],
+                                    message: INSTRUCTOR_TEXT + VALIDATION_TEXT }],
                                     initialValue: lesson.instructor.username+' ('+lesson.instructor.name+')'
                             })(
                                 <AutoComplete
@@ -37,9 +41,9 @@ const EditLesson = Form.create()(
                                 />
                             )}
                         </FormItem>
-                        <FormItem label="Lesson level">
+                        <FormItem label={LESSON_LEVEL_TEXT}>
                             {getFieldDecorator('lessonLevel', {
-                                rules: [{ required: true, message: 'Lesson level is required' }],
+                                rules: [{ required: true, message: LESSON_LEVEL_TEXT + VALIDATION_TEXT }],
                             })
                                 (
                                 <Select style={{width: 120}} defaultValue={lesson.lessonLevel}>

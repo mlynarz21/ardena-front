@@ -5,6 +5,12 @@ import { Link } from 'react-router-dom';
 import { isAdmin ,isInstructor, ACCESS_TOKEN } from '../../constants';
 
 import { Form, Input, Button, Icon, notification } from 'antd';
+import {
+    APP_NAME, ENTER_TEXT, ERROR_TEXT, LOGIN_TEXT, OR_TEXT, PASSWORD_TEXT, REGISTER_NOW_TEXT, SAMPLE_PASSWORD,
+    SAMPLE_USERNAME,
+    UNAUTHORIZED_LOGIN_TEXT,
+    USERNAME_EMAIL_TEXT
+} from "../../constants/Texts";
 const FormItem = Form.Item;
 
 class Login extends Component {
@@ -41,13 +47,13 @@ class LoginForm extends Component {
                 }).catch(error => {
                     if(error.status === 401) {
                         notification.error({
-                            message: 'Ardena',
-                            description: 'Your Username or Password is incorrect. Please try again!'
+                            message: APP_NAME,
+                            description: UNAUTHORIZED_LOGIN_TEXT
                         });                    
                     } else {
                         notification.error({
-                            message: 'Ardena',
-                            description: error.message || 'Sorry! Something went wrong. Please try again!'
+                            message: APP_NAME,
+                            description: error.message || ERROR_TEXT
                         });                                            
                     }
                 });
@@ -61,30 +67,30 @@ class LoginForm extends Component {
             <Form onSubmit={this.handleSubmit} className="login-form">
                 <FormItem>
                     {getFieldDecorator('usernameOrEmail', {
-                        rules: [{ required: true, message: 'Please input your username or email!' }],
+                        rules: [{ required: true, message: ENTER_TEXT + USERNAME_EMAIL_TEXT}],
                     })(
                     <Input 
                         prefix={<Icon type="user" />}
                         size="large"
                         name="usernameOrEmail" 
-                        placeholder="Username or Email" />    
+                        placeholder={SAMPLE_USERNAME} />
                     )}
                 </FormItem>
                 <FormItem>
                 {getFieldDecorator('password', {
-                    rules: [{ required: true, message: 'Please input your Password!' }],
+                    rules: [{ required: true, message: ENTER_TEXT + PASSWORD_TEXT }],
                 })(
                     <Input 
                         prefix={<Icon type="lock" />}
                         size="large"
                         name="password" 
                         type="password" 
-                        placeholder="Password"  />                        
+                        placeholder={SAMPLE_PASSWORD}  />
                 )}
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" htmlType="submit" size="large" className="login-form-button">Login</Button>
-                    Or <Link to="/signup">register now!</Link>
+                    <Button type="primary" htmlType="submit" size="large" className="login-form-button">{LOGIN_TEXT}</Button>
+                    {OR_TEXT} <Link to="/signup">{REGISTER_NOW_TEXT}</Link>
                 </FormItem>
             </Form>
         );

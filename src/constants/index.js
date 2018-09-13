@@ -5,7 +5,7 @@ export const isInstructor = false;
 export const isAdmin = true;
 
 export const POLL_LIST_SIZE = 30;
-export const MAX_CHOICES = 6;
+export const MAX_OPTIONS = 6;
 export const POLL_QUESTION_MAX_LENGTH = 140;
 export const POLL_CHOICE_MAX_LENGTH = 40;
 

@@ -1,5 +1,6 @@
 import { Table, Input, Form } from 'antd';
 import React, { Component } from 'react';
+import {VALIDATION_TEXT} from "../constants/Texts";
 
 const FormItem = Form.Item;
 const EditableContext = React.createContext();
@@ -15,7 +16,7 @@ const EditableFormRow = Form.create()(EditableRow);
 class EditableCell extends Component {
     state = {
         editing: false,
-    }
+    };
 
     componentDidMount() {
         if (this.props.editable) {
@@ -36,14 +37,14 @@ class EditableCell extends Component {
                 this.input.focus();
             }
         });
-    }
+    };
 
     handleClickOutside = (e) => {
         const { editing } = this.state;
         if (editing && this.cell !== e.target && !this.cell.contains(e.target)) {
             this.save();
         }
-    }
+    };
 
     save = () => {
         const { record, handleSave } = this.props;
@@ -54,7 +55,7 @@ class EditableCell extends Component {
             this.toggleEdit();
             handleSave({ ...record, ...values });
         });
-    }
+    };
 
     render() {
         const { editing } = this.state;
@@ -79,7 +80,7 @@ class EditableCell extends Component {
                                         {form.getFieldDecorator(dataIndex, {
                                             rules: [{
                                                 required: true,
-                                                message: `${title} is required.`,
+                                                message: `${title} ${VALIDATION_TEXT}`,
                                             }],
                                             initialValue: record[dataIndex],
                                         })(

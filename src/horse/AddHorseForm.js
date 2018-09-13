@@ -1,5 +1,6 @@
 import { Modal, Form, Input} from 'antd';
 import * as React from "react";
+import {ADD_TEXT, HORSE_TEXT, HORSE_NAME_TEXT, VALIDATION_TEXT, CANCEL_TEXT} from "../constants/Texts";
 const FormItem = Form.Item;
 
 const AddHorseForm = Form.create()(
@@ -10,15 +11,16 @@ const AddHorseForm = Form.create()(
             return (
                 <Modal
                     visible={visible}
-                    title="Add new Horse"
-                    okText="Add"
+                    title={ADD_TEXT + HORSE_TEXT}
+                    okText={ADD_TEXT}
+                    cancelText={CANCEL_TEXT}
                     onCancel={onCancel}
                     onOk={onCreate}
                 >
                     <Form layout="vertical">
-                        <FormItem label="Horse name">
+                        <FormItem label={HORSE_NAME_TEXT}>
                             {getFieldDecorator('horseName', {
-                                rules: [{ required: true, message: 'Please input the horse name!' }],
+                                rules: [{ required: true, message: HORSE_NAME_TEXT + VALIDATION_TEXT }],
                             })(
                                 <Input />
                             )}

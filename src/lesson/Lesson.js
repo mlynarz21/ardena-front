@@ -17,6 +17,16 @@ import AddHorseForm from "../horse/AddHorseForm";
 import EditLessonForm from "./EditLessonForm";
 import moment from "moment";
 import {formatDateTime} from "../util/Helpers";
+import {
+    ACTION_TEXT,
+    APP_NAME, DATE_TEXT, ERROR_TEXT, HORSE_TEXT, INSTRUCTOR_TEXT, LESSON_LEVEL_TEXT, NO_HORSE_TEXT, NO_TEXT, PASS_TEXT,
+    PAY_CASH_TEXT,
+    RESERVATION_PAY_CASH_TEXT,
+    RESERVATION_PAY_PASS_TEXT,
+    RIDER_NAME_TEXT,
+    UNAUTHORIZED_TEXT,
+    YES_TEXT
+} from "../constants/Texts";
 
 class Lesson extends Component {
 
@@ -73,30 +83,38 @@ class Lesson extends Component {
     confirmCancel(reservationId) {
         cancelReservation(reservationId).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
             this.loadLesson(this.props.match.params.lessonId);
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         });
     }
 
     confirmAccept(reservationId) {
         acceptReservation(reservationId).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
             this.loadLesson(this.props.match.params.lessonId);
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         });
     }
 
@@ -125,15 +143,19 @@ class Lesson extends Component {
                     date : this.state.lesson.date
                 }).then(response => {
                 notification.success({
-                    message: 'Ardena',
+                    message: APP_NAME,
                     description: response.message,
                 });
                 this.loadLesson(this.props.match.params.lessonId)
             }).catch(error => {
-                notification.error({
-                    message: 'Ardena',
-                    description: error.message || 'Sorry! Something went wrong. Please try again!'
-                });
+                if(error.status === 401) {
+                    this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+                } else {
+                    notification.error({
+                        message: APP_NAME,
+                        description: error.message || ERROR_TEXT
+                    });
+                }
             });
 
             form.resetFields();
@@ -147,9 +169,9 @@ class Lesson extends Component {
         this.formRef = formRef;
     };
 
-    renderHorse(record) {
+    static renderHorse(record) {
         if (record.horse === null) {
-            return "No horse"
+            return NO_HORSE_TEXT
         }
         else return record.horse.horseName
     }
@@ -161,14 +183,14 @@ class Lesson extends Component {
                     <Popconfirm placement="left" title="Want to accept this reservation?" onConfirm={() => {
                         this.confirmAccept(record.id)
                     }}
-                                okText="Yes" cancelText="No">
+                                okText={YES_TEXT} cancelText={NO_TEXT}>
                         <a>Accept </a>
                     </Popconfirm>
                     <Divider type="vertical"/>
                     <Popconfirm placement="left" title="Want to cancel this lesson?" onConfirm={() => {
                         this.confirmCancel(record.id)
                     }}
-                                okText="Yes" cancelText="No">
+                                okText={YES_TEXT} cancelText={NO_TEXT}>
                         <a> Cancel</a>
                     </Popconfirm>
                 </div>
@@ -178,22 +200,22 @@ class Lesson extends Component {
                 <Popconfirm placement="left" title="Want to cancel this lesson?" onConfirm={() => {
                     this.confirmCancel(record.id)
                 }}
-                            okText="Yes" cancelText="No">
+                            okText={YES_TEXT} cancelText={NO_TEXT}>
                     <a> Cancel</a>
                 </Popconfirm>
                 <Divider type="vertical"/>
-                <Popconfirm placement="left" title="Want to pay for this lesson? (pass)" onConfirm={() => {
+                <Popconfirm placement="left" title={RESERVATION_PAY_PASS_TEXT} onConfirm={() => {
                     this.payReservation(record.id, {status: "Paid_pass"});
                 }}
-                            okText="Yes" cancelText="No">
-                    <a>Pay with pass</a>
+                            okText={YES_TEXT} cancelText={NO_TEXT}>
+                    <a>{PASS_TEXT}</a>
                 </Popconfirm>
                 <Divider type="vertical"/>
-                <Popconfirm placement="left" title="Want to pay for this lesson? (cash)" onConfirm={() => {
+                <Popconfirm placement="left" title={RESERVATION_PAY_CASH_TEXT} onConfirm={() => {
                     this.payReservation(record.id, {status: "Paid_cash"});
                 }}
-                            okText="Yes" cancelText="No">
-                    <a>Pay with cash</a>
+                            okText={YES_TEXT} cancelText={NO_TEXT}>
+                    <a>{PAY_CASH_TEXT}</a>
                 </Popconfirm>
             </div>)
         }
@@ -202,15 +224,19 @@ class Lesson extends Component {
     payReservation(reservationId, data) {
         payForReservation(reservationId, data).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
             this.loadLesson(this.props.match.params.lessonId);
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         })
     }
 
@@ -218,15 +244,19 @@ class Lesson extends Component {
         updateReservation(row.id,
             {status: row.status, rider: row.rider, horseName: row.horse.horseName}).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
             this.loadLesson(this.props.match.params.lessonId)
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         })
     };
 
@@ -262,7 +292,7 @@ class Lesson extends Component {
             ],
             onFilter: (value, record) => record.status.indexOf(value) === 0
         }, {
-            title: 'Rider Name',
+            title: RIDER_NAME_TEXT,
             key: 'rider',
             width: '20%',
             render: (text, record) => (
@@ -271,16 +301,16 @@ class Lesson extends Component {
                 </Link>),
             sorter: (a, b) => ('' + a.rider.name).localeCompare(b.rider.name)
         }, {
-            title: 'Horse',
+            title: HORSE_TEXT,
             dataIndex: 'horse.horseName',
             key: 'horse',
             width: '20%',
             editable: true,
             render: (text, record) => (
-                this.renderHorse(record)
+                Lesson.renderHorse(record)
             )
         }, {
-            title: 'Action',
+            title: ACTION_TEXT,
             key: 'action',
             width: '35%',
             render: (text, record) => (
@@ -293,22 +323,14 @@ class Lesson extends Component {
                 <div className="lesson-container">
                     <div className="flex-alert">
                         <Alert className="lesson-info-date"
-                               message={`Date: ${formatDateTime(this.state.lesson.date)}`}/>
+                               message={`${DATE_TEXT}: ${formatDateTime(this.state.lesson.date)}`}/>
                         <Link className="user-link" to={`/users/${this.state.lesson.instructor.username}`}>
                             <Alert className="lesson-info-instructor"
-                                   message={`Instructor: ${this.state.lesson.instructor.name}`}/>
+                                   message={`${INSTRUCTOR_TEXT}: ${this.state.lesson.instructor.name}`}/>
                         </Link>
                         <Alert className="lesson-info-level"
-                               message={`Lesson level: ${this.state.lesson.lessonLevel}`}/>
+                               message={`${LESSON_LEVEL_TEXT}: ${this.state.lesson.lessonLevel}`}/>
                     </div>
-                    {/*<Table className="reservations-table"*/}
-                    {/*dataSource={this.state.lesson.reservations}*/}
-                    {/*columns={reservationColumns}*/}
-                    {/*rowKey='id'*/}
-                    {/*rowClassName="lesson-row"*/}
-                    {/*// scroll={{ x: '100%', y: '100%' }}*/}
-                    {/*// pagination={false}*/}
-                    {/*/>*/}
 
                     <div className="reservation-list">
                         <EditableTableAutocomplete
@@ -316,9 +338,8 @@ class Lesson extends Component {
                             dataSource={this.state.lesson.reservations}
                             columns={reservationColumns}
                             handleSave={this.handleSave}
-                            options={this.state.horseArray.map(horse => horse.horseName)}
-                            // scroll={{ x: '100%' }}
-                        ></EditableTableAutocomplete>
+                            options={this.state.horseArray.map(horse => horse.horseName)}>
+                        </EditableTableAutocomplete>
 
                         <Button type="primary"
                                 className={this.state.lesson.reservations.length > 0 ? 'edit-lesson-button' : 'edit-lesson-button-no-data'}
@@ -340,12 +361,12 @@ class Lesson extends Component {
                 <div className="flex-alert">
                     <Link className="user-link" to={`/users/${this.state.lesson.instructor.username}`}>
                         <Alert className="lesson-info"
-                               message={`Instructor: ${this.state.lesson.instructor.name}`}/>
+                               message={`${INSTRUCTOR_TEXT}: ${this.state.lesson.instructor.name}`}/>
                     </Link>
                     <Alert className="lesson-info"
-                           message={`Date: ${formatDateTime(this.state.lesson.date)}`}/>
+                           message={`${DATE_TEXT}: ${formatDateTime(this.state.lesson.date)}`}/>
                     <Alert className="lesson-info"
-                           message={`Level: ${this.state.lesson.lessonLevel}`}/>
+                           message={`${LESSON_LEVEL_TEXT}: ${this.state.lesson.lessonLevel}`}/>
                 </div>
                 <Table className="reservations-table"
                        dataSource={this.state.lesson.reservations}

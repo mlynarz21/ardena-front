@@ -7,7 +7,7 @@ import LoadingIndicator from "../common/LoadingIndicator";
 import NotFound from "../common/NotFound";
 import ServerError from "../common/ServerError";
 import {formatDateTime} from "../util/Helpers";
-import {notification} from "antd/lib/index";
+import {NO_PASSES_TEXT, VALID_TEXT} from "../constants/Texts";
 
 class Pass extends Component {
 
@@ -56,7 +56,7 @@ class Pass extends Component {
         if (this.state.pass===null) {
             return (
                 <div className="no-pass-found">
-                    <span>No valid passes found</span>
+                    <span>{NO_PASSES_TEXT}</span>
                 </div>);
         }
 
@@ -65,7 +65,7 @@ class Pass extends Component {
                 <div className="pass-content">
                     <div className="pass-header">
                         <span className="pass-expiry-date">
-                                {"Valid until " + formatDateTime(this.state.pass.expirationDate)}
+                            {VALID_TEXT + formatDateTime(this.state.pass.expirationDate)}
                          </span>
                     </div>
                     <div className="stamp-container">

@@ -11,7 +11,20 @@
     box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
 }
 
-.event-description {
+.event-date {
+    font-weight: 500;
+    font-size: 14px;
+    color: rgba(255, 0, 96, 0.85);
+    margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+    .event-date {
+        font-size: 11px;
+    }
+}
+
+.event-description{
     font-weight: 500;
     font-size: 21px;
     color: rgba(0, 0, 0, 0.85);
@@ -19,7 +32,7 @@
 }
 
 @media (max-width: 768px) {
-    .event-description {
+    .event-description{
         font-size: 18px;
     }
 }

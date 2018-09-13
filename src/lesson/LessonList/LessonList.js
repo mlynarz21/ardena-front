@@ -16,6 +16,19 @@ import {notification} from "antd/lib/index";
 import {Link, withRouter} from 'react-router-dom';
 import {LevelOptions} from "../../constants";
 import {formatDateTimeShort, formatDateToDMY, getIsoStringFromDate} from "../../util/Helpers";
+import {
+    ACTION_TEXT,
+    APP_NAME, CANCEL_TEXT, DATE_TEXT, ERROR_TEXT, HORSE_TEXT, INSTRUCTOR_TEXT, LESSON_LEVEL_TEXT, LESSON_TEXT,
+    MY_HISTORY_TEXT,
+    MY_LESSONS_TEXT,
+    NO_TEXT, PASS_TEXT,
+    PENDING_PAYMENTS_TEXT,
+    RESERVATION_CANCEL_TEXT, RESERVATION_PAY_PASS_TEXT,
+    RESERVE_LESSON_TEXT,
+    RESERVE_TEXT, SELECTED_DATE_TEXT, STATUS_TEXT,
+    UNAUTHORIZED_TEXT,
+    YES_TEXT
+} from "../../constants/Texts";
 
 const TabPane = Tabs.TabPane;
 
@@ -142,57 +155,69 @@ class LessonList extends Component {
     confirm(lessonId) {
         addReservation(lessonId).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
             this.props.history.push("/lessons");
             this.loadReservationArray();
             this.loadLessonArrayByDate({date: getIsoStringFromDate(this.state.value)});
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         });
     }
 
     cancelLesson(reservationId) {
         cancelReservation(reservationId).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
             this.props.history.push("/lessons");
             this.loadReservationArray();
             this.loadLessonArrayByDate({date: getIsoStringFromDate(this.state.value)});
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         })
     }
 
     payReservation(reservationId, data){
         payForReservation(reservationId, data).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
             this.props.history.push("/lessons");
             this.loadPendingPaymentArray();
             this.loadHistoryArray();
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         })
     }
 
     static getCancelText(recordState){
         if(recordState!=='Cancelled')
-            return "Cancel";
+            return CANCEL_TEXT;
         else return ""
     }
 
@@ -242,19 +267,19 @@ class LessonList extends Component {
                    {record.id}
                 </Link>)
         }, {
-            title: 'Level',
+            title: LESSON_LEVEL_TEXT,
             dataIndex: 'lessonLevel',
             key: 'lessonLevel',
             width: '15%'
         }, {
-            title: 'Date',
+            title: DATE_TEXT,
             key: 'date',
             width: '25%',
             render: (text, record) => (
                 formatDateTimeShort(record.date)
             )
         }, {
-            title: 'Instructor',
+            title: INSTRUCTOR_TEXT,
             key: 'instructor',
             width: '30%',
             render: (text, record) => (
@@ -262,15 +287,15 @@ class LessonList extends Component {
                     {record.instructor.name}
                 </Link>)
         }, {
-            title: 'Action',
+            title: ACTION_TEXT,
             key: 'action',
             width: '20%',
             render: (text, record) => (
-                <Popconfirm placement="left" title="Want to reserve this lesson?" onConfirm={() => {
+                <Popconfirm placement="left" title={RESERVE_LESSON_TEXT} onConfirm={() => {
                     this.confirm(record.id)
                 }}
-                            okText="Yes" cancelText="No">
-                    <a>Reserve</a>
+                            okText={YES_TEXT} cancelText={NO_TEXT}>
+                    <a>{RESERVE_TEXT}</a>
                 </Popconfirm>)
         }];
 
@@ -284,19 +309,19 @@ class LessonList extends Component {
                     {record.id}
                 </Link>)
         }, {
-            title: 'Level',
+            title: LESSON_LEVEL_TEXT,
             dataIndex: 'lesson.lessonLevel',
             key: 'lessonLevel',
             width: '10%'
         }, {
-            title: 'Date',
+            title: DATE_TEXT,
             key: 'date',
             width: '20%',
             render: (text, record) => (
                 formatDateTimeShort(record.lesson.date)
             )
         }, {
-            title: 'Instructor',
+            title: INSTRUCTOR_TEXT,
             key: 'instructor',
             width: '20%',
             render: (text, record) => (
@@ -304,24 +329,24 @@ class LessonList extends Component {
                     {record.lesson.instructor.name}
                 </Link>)
         }, {
-            title: 'Horse',
+            title: HORSE_TEXT,
             dataIndex: 'horse.horseName',
             key: 'horse',
             width: '15%'
         }, {
-            title: 'Status',
+            title: STATUS_TEXT,
             dataIndex: 'status',
             key: 'status',
             width: '10%'
         }, {
-            title: 'Action',
+            title: ACTION_TEXT,
             key: 'action',
             width: '15%',
             render: (text, record) => (
-                <Popconfirm placement="left" title="Want to cancel this lesson?" onConfirm={() => {
+                <Popconfirm placement="left" title={RESERVATION_CANCEL_TEXT} onConfirm={() => {
                     this.cancelLesson(record.id)
                 }}
-                            okText="Yes" cancelText="No">
+                            okText={YES_TEXT} cancelText={NO_TEXT}>
                     <a>{LessonList.getCancelText(record.status)}</a>
                 </Popconfirm>)
         }];
@@ -336,14 +361,14 @@ class LessonList extends Component {
                     {record.id}
                 </Link>)
         }, {
-            title: 'Level',
+            title: LESSON_LEVEL_TEXT,
             dataIndex: 'lesson.lessonLevel',
             key: 'lessonLevel',
             width: '10%',
             filters: LevelOptions.map(element => ({text: element, value: element})),
             onFilter: (value, record) => record.lesson.lessonLevel.indexOf(value) === 0
         }, {
-            title: 'Date',
+            title: DATE_TEXT,
             key: 'date',
             width: '20%',
             render: (text, record) => (
@@ -351,7 +376,7 @@ class LessonList extends Component {
             ),
             sorter: (a, b) => moment(a.lesson.date, 'YYYY-MM-DD HH:mm').valueOf()-moment(b.lesson.date, 'YYYY-MM-DD HH:mm').valueOf()
         }, {
-            title: 'Instructor',
+            title: INSTRUCTOR_TEXT,
             key: 'instructor',
             width: '20%',
             render: (text, record) => (
@@ -364,7 +389,7 @@ class LessonList extends Component {
                 }),
             onFilter: (value, record) => record.lesson.instructor.name.indexOf(value===null? "": value) === 0
         }, {
-            title: 'Horse',
+            title: HORSE_TEXT,
             dataIndex: 'horse.horseName',
             key: 'horse',
             width: '15%',
@@ -374,7 +399,7 @@ class LessonList extends Component {
                 }),
             onFilter: (value, record) => record.horse === null ? false: record.horse.horseName.indexOf(value===null? "": value) === 0
         }, {
-            title: 'Status',
+            title: STATUS_TEXT,
             dataIndex: 'status',
             key: 'status',
             width: '25%',
@@ -398,19 +423,19 @@ class LessonList extends Component {
                     {record.id}
                 </Link>)
         }, {
-            title: 'Level',
+            title: LESSON_LEVEL_TEXT,
             dataIndex: 'lesson.lessonLevel',
             key: 'lessonLevel',
             width: '10%'
         }, {
-            title: 'Date',
+            title: DATE_TEXT,
             key: 'date',
             width: '20%',
             render: (text, record) => (
                 formatDateTimeShort(record.lesson.date)
             )
         }, {
-            title: 'Instructor',
+            title: INSTRUCTOR_TEXT,
             key: 'instructor',
             width: '20%',
             render: (text, record) => (
@@ -418,88 +443,87 @@ class LessonList extends Component {
                     {record.lesson.instructor.name}
                 </Link>)
         }, {
-            title: 'Action',
+            title: ACTION_TEXT,
             key: 'action',
             width: '40%',
             render: (text, record) => (
-                <Popconfirm placement="left" title="Want to pay for this lesson? (pass)" onConfirm={() => {
+                <Popconfirm placement="left" title={RESERVATION_PAY_PASS_TEXT} onConfirm={() => {
                     this.payReservation(record.id,{status: "Paid_pass"});
                 }}
-                            okText="Yes" cancelText="No">
-                    <a>Pay with pass</a>
+                            okText={YES_TEXT} cancelText={NO_TEXT}>
+                    <a>{PASS_TEXT}</a>
                 </Popconfirm>)
         }];
 
-        return (
-            <div className="lesson-list">
-                <div className="tab-panel">
+        return <div className="lesson-list">
+            <div className="tab-panel">
 
-                    <Tabs defaultActiveKey="1"
-                          animated={false}
-                          tabBarStyle={tabBarStyle}
-                          size="large"
-                          className="lesson-tabs">
+                <Tabs defaultActiveKey="1"
+                      animated={false}
+                      tabBarStyle={tabBarStyle}
+                      size="large"
+                      className="lesson-tabs">
 
-                        <TabPane tab={`Reserve lesson`} key="1">
-                            <div className="flex-container">
-                                <div className="lesson-calendar">
-                                    <Alert className="date-alert"
-                                           message={`You selected date: ${this.state.selectedValue}`}/>
-                                    <Calendar value={this.state.value}
-                                              onSelect={this.onSelect}
-                                              onPanelChange={this.onPanelChange}
-                                              disabledDate={this.disabledDate}
-                                              fullscreen={false}
-                                              dateCellRender={dateCellRender}
-                                    />
-                                </div>
-                                <Table className="lesson-table"
-                                       dataSource={this.state.lessonByDateArray}
-                                       columns={lessonColumns}
-                                       rowKey='id'
-                                       rowClassName="lesson-row"
-                                    // scroll={{ x: '100%', y: '100%' }}
-                                    // pagination={false}
+                    <TabPane tab={RESERVE_TEXT + LESSON_TEXT} key="1">
+                        <div className="flex-container">
+                            <div className="lesson-calendar">
+                                <Alert className="date-alert"
+                                       message={`${SELECTED_DATE_TEXT} : ${this.state.selectedValue}`}/>
+                                <Calendar value={this.state.value}
+                                          onSelect={this.onSelect}
+                                          onPanelChange={this.onPanelChange}
+                                          disabledDate={this.disabledDate}
+                                          fullscreen={false}
+                                          dateCellRender={dateCellRender}
                                 />
                             </div>
-                        </TabPane>
-
-                        <TabPane tab={`My lessons`} key="2">
-                                <Table className="reservation-table"
-                                       dataSource={this.state.reservationArray}
-                                       columns={reservationColumns}
-                                       rowKey='id'
-                                       rowClassName="lesson-row"
-                                    // scroll={{ x: '100%', y: '100%' }}
-                                    // pagination={false}
-                                />
-                        </TabPane>
-
-                        <TabPane tab={`My History`} key="3">
-                            <Table className="reservation-history-table"
-                                   dataSource={this.state.reservationHistoryArray}
-                                   columns={reservationHistoryColumns}
+                            <Table className="lesson-table"
+                                   dataSource={this.state.lessonByDateArray}
+                                   columns={lessonColumns}
                                    rowKey='id'
                                    rowClassName="lesson-row"
                                 // scroll={{ x: '100%', y: '100%' }}
                                 // pagination={false}
                             />
-                        </TabPane>
+                        </div>
+                    </TabPane>
 
-                        <TabPane tab={`Pending payments`} key="4">
-                            <Table className="pending-payments-table"
-                                   dataSource={this.state.pendingPaymentArray}
-                                   columns={pendingPaymentColumns}
-                                   rowKey='id'
-                                   rowClassName="lesson-row"
-                                // scroll={{ x: '100%', y: '100%' }}
-                                // pagination={false}
-                            />
-                        </TabPane>
+                    <TabPane tab={MY_LESSONS_TEXT} key="2">
+                        <Table className="reservation-table"
+                               dataSource={this.state.reservationArray}
+                               columns={reservationColumns}
+                               rowKey='id'
+                               rowClassName="lesson-row"
+                            // scroll={{ x: '100%', y: '100%' }}
+                            // pagination={false}
+                        />
+                    </TabPane>
 
-                    </Tabs>
-                </div>
-            </div>);
+                    <TabPane tab={MY_HISTORY_TEXT} key="3">
+                        <Table className="reservation-history-table"
+                               dataSource={this.state.reservationHistoryArray}
+                               columns={reservationHistoryColumns}
+                               rowKey='id'
+                               rowClassName="lesson-row"
+                            // scroll={{ x: '100%', y: '100%' }}
+                            // pagination={false}
+                        />
+                    </TabPane>
+
+                    <TabPane tab={PENDING_PAYMENTS_TEXT} key="4">
+                        <Table className="pending-payments-table"
+                               dataSource={this.state.pendingPaymentArray}
+                               columns={pendingPaymentColumns}
+                               rowKey='id'
+                               rowClassName="lesson-row"
+                            // scroll={{ x: '100%', y: '100%' }}
+                            // pagination={false}
+                        />
+                    </TabPane>
+
+                </Tabs>
+            </div>
+        </div>;
     }
 }
 

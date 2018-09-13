@@ -12,6 +12,7 @@ import scheduleIcon from '../schedule.svg';
 import myRidesIcon from '../myRides.svg';
 import { Layout, Menu, Dropdown} from 'antd';
 import {isAdmin, isInstructor} from "../constants";
+import {APP_NAME, LOGIN_TEXT, LOGOUT_TEXT, PROFILE_TEXT, SIGNUP_TEXT} from "../constants/Texts";
 const Header = Layout.Header;
     
 class AppHeader extends Component {
@@ -97,10 +98,10 @@ class AppHeader extends Component {
         } else {
             menuItems = [
                 <Menu.Item key="/login">
-                    <Link to="/login">Login</Link>
+                    <Link to="/login">{LOGIN_TEXT}</Link>
                 </Menu.Item>,
                 <Menu.Item key="/signup">
-                    <Link to="/signup">Signup</Link>
+                    <Link to="/signup">{SIGNUP_TEXT}</Link>
                 </Menu.Item>
             ];
         }
@@ -109,7 +110,7 @@ class AppHeader extends Component {
             <Header className="app-header">
                 <div className="container">
                     <div className="app-title">
-                        <Link to="/">Ardena</Link>
+                        <Link to="/">{APP_NAME}</Link>
                     </div>
                     <Menu
                         className="app-menu"
@@ -137,10 +138,10 @@ function ProfileDropdownMenu(props) {
             </Menu.Item>
             <Menu.Divider/>
             <Menu.Item key="profile" className="dropdown-item">
-                <Link to={`/users/${props.currentUser.username}`}>Profile</Link>
+                <Link to={`/users/${props.currentUser.username}`}>{PROFILE_TEXT}</Link>
             </Menu.Item>
             <Menu.Item key="logout" className="dropdown-item">
-                Logout
+                {LOGOUT_TEXT}
             </Menu.Item>
         </Menu>
     );

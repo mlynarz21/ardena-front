@@ -117,7 +117,7 @@ class EditableCell extends Component {
 class EditableTableAutocomplete extends Component {
     constructor(props) {
         super(props);
-        this.columns = this.props.columns
+        this.columns = this.props.columns;
 
         this.state = {
             dataSource: this.props.dataSource

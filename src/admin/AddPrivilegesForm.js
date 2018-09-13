@@ -1,6 +1,7 @@
 import {Select, DatePicker, TimePicker, Modal, Form, AutoComplete} from 'antd';
 import * as React from "react";
 import {getAdmins} from "../util/APIUtils";
+import {ADD_TEXT, CANCEL_TEXT, INPUT_TEXT, PRIVILEGES_TEXT, USER_TEXT, VALIDATION_TEXT} from "../constants/Texts";
 
 const FormItem = Form.Item;
 
@@ -13,20 +14,21 @@ const AddPrivilegesForm = Form.create()(
             return (
                 <Modal
                     visible={visible}
-                    title="Add privileges"
-                    okText="Add"
+                    title={ADD_TEXT + PRIVILEGES_TEXT}
+                    okText={ADD_TEXT}
+                    cancelText={CANCEL_TEXT}
                     onCancel={onCancel}
                     onOk={onCreate}
                 >
                     <Form layout="vertical">
-                        <FormItem className="user-picker" label="User">
+                        <FormItem className="user-picker" label={USER_TEXT}>
                             {getFieldDecorator('user', {
-                                rules: [{required: true, message: 'Please pick up the user!'}],
+                                rules: [{required: true, message: USER_TEXT + VALIDATION_TEXT}],
                             })(
                                 <AutoComplete
                                     style={{ width: 300 }}
                                     dataSource={dataSource}
-                                    placeholder="type here"
+                                    placeholder={INPUT_TEXT}
                                     filterOption={(inputValue, option) => option.props.children.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
                                 />
                             )}

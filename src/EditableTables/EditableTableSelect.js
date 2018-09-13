@@ -1,6 +1,7 @@
 import {Table, Select, Form} from 'antd';
 import React, { Component } from 'react';
 import {LevelOptions} from "../constants/index";
+import {VALIDATION_TEXT} from "../constants/Texts";
 
 const FormItem = Form.Item;
 const EditableContext = React.createContext();
@@ -82,7 +83,7 @@ class EditableCell extends Component {
                                         {form.getFieldDecorator(dataIndex, {
                                             rules: [{
                                                 required: true,
-                                                message: `${title} is required.`,
+                                                message: `${title} ${VALIDATION_TEXT}`,
                                             }],
                                         })(
                                             <Select

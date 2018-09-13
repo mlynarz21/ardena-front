@@ -25,6 +25,7 @@ import { Layout, notification } from 'antd';
 import Schedule from "../lesson/Schedule/Schedule";
 import Lesson from "../lesson/Lesson";
 import Admin from "../admin/Admin";
+import {APP_NAME, LOGIN_NOTIFICATION_TEXT, LOGOUT_NOTIFICATION_TEXT} from "../constants/Texts";
 const { Content } = Layout;
 
 class App extends Component {
@@ -36,7 +37,7 @@ class App extends Component {
             isLoading: false,
             isInstructor: false,
             isAdmin: false
-        }
+        };
         this.handleLogout = this.handleLogout.bind(this);
         this.loadCurrentUser = this.loadCurrentUser.bind(this);
         this.handleLogin = this.handleLogin.bind(this);
@@ -72,7 +73,7 @@ class App extends Component {
         this.loadCurrentUser();
     }
 
-    handleLogout(redirectTo = "/", notificationType = "success", description = "You're successfully logged out.") {
+    handleLogout(redirectTo = "/", notificationType = "success", description = LOGOUT_NOTIFICATION_TEXT) {
         localStorage.removeItem(ACCESS_TOKEN);
         localStorage.removeItem(isInstructor);
         localStorage.removeItem(isAdmin);
@@ -87,15 +88,15 @@ class App extends Component {
         this.props.history.push(redirectTo);
 
         notification[notificationType]({
-            message: 'Ardena',
+            message: APP_NAME,
             description: description,
         });
     }
 
     handleLogin() {
         notification.success({
-            message: 'Ardena',
-            description: "You're successfully logged in.",
+            message: APP_NAME,
+            description: LOGIN_NOTIFICATION_TEXT,
         });
         this.loadCurrentUser();
         this.props.history.push("/");
@@ -119,21 +120,54 @@ class App extends Component {
                                                                 currentUser={this.state.currentUser}
                                                                 handleLogout={this.handleLogout} {...props} />}>
                             </Route>
-                            <PrivateRoute authenticated={this.state.isInstructor} path="/horses" component={HorseList}></PrivateRoute>
-                            <PrivateRoute authenticated={this.state.isAdmin} path="/admin" component={Admin}></PrivateRoute>
-                            <PrivateRoute authenticated={this.state.isAuthenticated} path="/lessons/:lessonId" component={Lesson}></PrivateRoute>
-                            <PrivateRoute authenticated={this.state.isAuthenticated} path="/lessons" component={LessonList}></PrivateRoute>
-                            <PrivateRoute authenticated={this.state.isInstructor} path="/schedule" component={Schedule}></PrivateRoute>
+                            <PrivateRoute
+                                authenticated={this.state.isInstructor}
+                                path="/horses"
+                                component={HorseList}>
+                            </PrivateRoute>
+                            <PrivateRoute
+                                authenticated={this.state.isAdmin}
+                                path="/admin"
+                                component={Admin}>
+                            </PrivateRoute>
+                            <PrivateRoute
+                                authenticated={this.state.isAuthenticated}
+                                path="/lessons/:lessonId"
+                                component={Lesson}>
+                            </PrivateRoute>
+                            <PrivateRoute
+                                authenticated={this.state.isAuthenticated}
+                                path="/lessons"
+                                component={LessonList}>
+                            </PrivateRoute>
+                            <PrivateRoute
+                                authenticated={this.state.isInstructor}
+                                path="/schedule"
+                                component={Schedule}>
+                            </PrivateRoute>
+
                             <Route path="/login"
-                                   render={(props) => <Login onLogin={this.handleLogin} {...props} />}></Route>
-                            <Route path="/signup" component={Signup}></Route>
-                            <Route path="/users/:username"
-                                   render={(props) => <Profile isAuthenticated={this.state.isAuthenticated}
-                                                               currentUser={this.state.currentUser} {...props}  />}>
+                                   render={(props) => <Login onLogin={this.handleLogin} {...props} />}>
                             </Route>
-                            <PrivateRoute authenticated={this.state.isAuthenticated} path="/event/new"
-                                          component={NewEvent} handleLogout={this.handleLogout}></PrivateRoute>
-                            <Route component={NotFound}></Route>
+
+                            <Route path="/signup" component={Signup}>
+                            </Route>
+
+                            <Route path="/users/:username"
+                                   render={(props) => <Profile
+                                       isAuthenticated={this.state.isAuthenticated}
+                                       currentUser={this.state.currentUser} {...props}
+                                   />}>
+                            </Route>
+                            <PrivateRoute
+                                authenticated={this.state.isAuthenticated}
+                                path="/event/new"
+                                component={NewEvent}
+                                handleLogout={this.handleLogout}>
+                            </PrivateRoute>
+                            <Route
+                                component={NotFound}>
+                            </Route>
                         </Switch>
                     </div>
                 </Content>

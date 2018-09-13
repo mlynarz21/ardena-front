@@ -4,9 +4,13 @@ import Event from './Event';
 import { castVote } from '../util/APIUtils';
 import LoadingIndicator  from '../common/LoadingIndicator';
 import { Button, Icon, notification } from 'antd';
-import { POLL_LIST_SIZE } from '../constants';
+import {isAdmin, POLL_LIST_SIZE} from '../constants';
 import { withRouter } from 'react-router-dom';
 import './EventList.css';
+import {
+    APP_NAME, ERROR_TEXT, LOAD_MORE_TEXT, NO_EVENTS_TEXT, PLEASE_LOGIN_TEXT,
+    UNAUTHORIZED_TEXT
+} from "../constants/Texts";
 
 class EventList extends Component {
     constructor(props) {
@@ -27,8 +31,8 @@ class EventList extends Component {
 
     loadEventList(page = 0, size = POLL_LIST_SIZE) {
         let promise;
-        if(this.props.username) {
-            if(this.props.type === 'USER_CREATED_POLLS') {
+        if (this.props.username) {
+            if (this.props.type === 'USER_CREATED_POLLS') {
                 promise = getUserCreatedEvents(this.props.username, page, size);
             } else if (this.props.type === 'USER_VOTED_POLLS') {
                 promise = getUserVotedEvents(this.props.username, page, size);
@@ -37,7 +41,7 @@ class EventList extends Component {
             promise = getAllEvents(page, size);
         }
 
-        if(!promise) {
+        if (!promise) {
             return;
         }
 
@@ -45,27 +49,27 @@ class EventList extends Component {
             isLoading: true
         });
 
-        promise            
-        .then(response => {
-            const events = this.state.events.slice();
-            const currentVotes = this.state.currentVotes.slice();
+        promise
+            .then(response => {
+                const events = this.state.events.slice();
+                const currentVotes = this.state.currentVotes.slice();
 
+                this.setState({
+                    events: events.concat(response.content),
+                    page: response.page,
+                    size: response.size,
+                    totalElements: response.totalElements,
+                    totalPages: response.totalPages,
+                    last: response.last,
+                    currentVotes: currentVotes.concat(Array(response.content.length).fill(null)),
+                    isLoading: false
+                })
+            }).catch(error => {
             this.setState({
-                events: events.concat(response.content),
-                page: response.page,
-                size: response.size,
-                totalElements: response.totalElements,
-                totalPages: response.totalPages,
-                last: response.last,
-                currentVotes: currentVotes.concat(Array(response.content.length).fill(null)),
                 isLoading: false
             })
-        }).catch(error => {
-            this.setState({
-                isLoading: false
-            })
-        });  
-        
+        });
+
     }
 
     componentWillMount() {
@@ -73,7 +77,7 @@ class EventList extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(this.props.isAuthenticated !== nextProps.isAuthenticated) {
+        if (this.props.isAuthenticated !== nextProps.isAuthenticated) {
             // Reset State
             this.setState({
                 events: [],
@@ -84,7 +88,7 @@ class EventList extends Component {
                 last: true,
                 currentVotes: [],
                 isLoading: false
-            });    
+            });
             this.loadEventList();
         }
     }
@@ -105,11 +109,11 @@ class EventList extends Component {
 
     handleVoteSubmit(e, eventIndex) {
         e.preventDefault();
-        if(!this.props.isAuthenticated) {
+        if (!this.props.isAuthenticated) {
             this.props.history.push("/login");
             notification.info({
-                message: 'Ardena',
-                description: "Please login to vote.",          
+                message: APP_NAME,
+                description: PLEASE_LOGIN_TEXT,
             });
             return;
         }
@@ -123,22 +127,33 @@ class EventList extends Component {
         };
 
         castVote(voteData)
-        .then(response => {
-            const events = this.state.events.slice();
-            events[eventIndex] = response;
-            this.setState({
-                events: events
-            });        
-        }).catch(error => {
-            if(error.status === 401) {
-                this.props.handleLogout('/login', 'error', 'You have been logged out. Please login to vote');    
+            .then(response => {
+                const events = this.state.events.slice();
+                events[eventIndex] = response;
+                this.setState({
+                    events: events
+                });
+            }).catch(error => {
+            if (error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
             } else {
                 notification.error({
-                    message: 'Ardena',
-                    description: error.message || 'Sorry! Something went wrong. Please try again!'
-                });                
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
             }
         });
+    }
+
+    renderAddButton() {
+        if (localStorage.getItem(isAdmin) === 'true') {
+            return (
+                <div className="create-event-div">
+                    <Button type="primary" shape="circle" size="large" icon="plus" className="create-event-button"
+                            onClick={() => this.props.history.push("/event/new")}/>
+                </div>
+            )
+        }
     }
 
     render() {
@@ -149,33 +164,31 @@ class EventList extends Component {
                 event={event}
                 currentVote={this.state.currentVotes[eventIndex]}
                 handleVoteChange={(event) => this.handleVoteChange(event, eventIndex)}
-                handleVoteSubmit={(event) => this.handleVoteSubmit(event, eventIndex)} />)
+                handleVoteSubmit={(event) => this.handleVoteSubmit(event, eventIndex)}/>)
         });
 
         return (
             <div className="events-container">
-                <div className="create-event-div">
-                    <Button type="primary" shape="circle" size="large" icon="plus" className="create-event-button" onClick={() => this.props.history.push("/event/new")}/>
-                </div>
+                {this.renderAddButton()}
                 {eventViews}
                 {
                     !this.state.isLoading && this.state.events.length === 0 ? (
                         <div className="no-events-found">
-                            <span>No Events Found.</span>
+                            <span>{NO_EVENTS_TEXT}</span>
                         </div>
-                    ): null
+                    ) : null
                 }
                 {
                     !this.state.isLoading && !this.state.last ? (
                         <div className="load-more-events">
                             <Button type="dashed" onClick={this.handleLoadMore} disabled={this.state.isLoading}>
-                                <Icon type="plus" /> Load more
+                                <Icon type="plus"/> {LOAD_MORE_TEXT}
                             </Button>
-                        </div>): null
+                        </div>) : null
                 }
                 {
                     this.state.isLoading ?
-                    <LoadingIndicator />: null
+                        <LoadingIndicator/> : null
                 }
             </div>
         );

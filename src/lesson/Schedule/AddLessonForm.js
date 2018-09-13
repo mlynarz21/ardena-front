@@ -2,6 +2,10 @@ import { Select, DatePicker, TimePicker, Modal, Form} from 'antd';
 import * as React from "react";
 import {LevelOptions} from "../../constants";
 import moment from "moment";
+import {
+    ADD_TEXT, CANCEL_TEXT, LESSON_DATE_TEXT, LESSON_LEVEL_TEXT, LESSON_TEXT, LESSON_TIME_TEXT,
+    VALIDATION_TEXT
+} from "../../constants/Texts";
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -22,35 +26,36 @@ const AddLessonForm = Form.create()(
             return (
                 <Modal
                     visible={visible}
-                    title="Add new lesson"
-                    okText="Add"
+                    title={ADD_TEXT + LESSON_TEXT}
+                    okText={ADD_TEXT}
+                    cancelText={CANCEL_TEXT}
                     onCancel={onCancel}
                     onOk={onCreate}
                 >
                     <Form layout="vertical">
                         <div className="flex-container">
-                            <FormItem className="date-picker" label="Lesson date">
+                            <FormItem className="date-picker" label={LESSON_DATE_TEXT}>
                                 {getFieldDecorator('date', {
-                                    rules: [{required: true, message: 'Please pick the date!'}],
+                                    rules: [{required: true, message: LESSON_DATE_TEXT + VALIDATION_TEXT}],
                                 })(
                                     <DatePicker
                                         disabledDate={this.disabledDate}
                                     />
                                 )}
                             </FormItem>
-                            <FormItem style={{marginLeft: 20}} className="time-picker" label="Lesson hour">
+                            <FormItem style={{marginLeft: 20}} className="time-picker" label={LESSON_TIME_TEXT}>
                                 {getFieldDecorator('time', {
-                                    rules: [{required: true, message: 'Please pick the time!'}],
+                                    rules: [{required: true, message: LESSON_TIME_TEXT + VALIDATION_TEXT}],
                                 })(
                                     <TimePicker
-                                        minuteStep={15}
+                                        minuteStep={30}
                                         format={format}/>
                                 )}
                             </FormItem>
                         </div>
-                        <FormItem className="level-picker" label="Lesson level">
+                        <FormItem className="level-picker" label={LESSON_LEVEL_TEXT}>
                             {getFieldDecorator('level', {
-                                rules: [{required: true, message: 'Please pick lesson level!'}],
+                                rules: [{required: true, message: LESSON_LEVEL_TEXT + VALIDATION_TEXT}],
                             })(
                                 <Select style={{width: 120}}>
                                     {

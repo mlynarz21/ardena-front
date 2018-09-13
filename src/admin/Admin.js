@@ -14,6 +14,14 @@ import {notification} from "antd/lib/index";
 import AddPrivilegesForm from "./AddPrivilegesForm";
 import EditableTable from "../EditableTables/EditableTable";
 import moment from "moment";
+import {
+    ACTION_TEXT, ADD_TEXT, ADMIN_REMOVAL_TEXT, ADMINS_TEXT, APP_NAME, ERROR_TEXT, INSTRUCTOR_REMOVAL_TEXT,
+    INSTRUCTORS_TEXT,
+    NAME_TEXT, NO_TEXT,
+    REMOVE_TEXT,
+    UNAUTHORIZED_TEXT,
+    USERNAME_TEXT, YES_TEXT
+} from "../constants/Texts";
 
 const TabPane = Tabs.TabPane;
 
@@ -28,9 +36,7 @@ class Admin extends Component {
             userArray: [],
             visible: false,
             activeKey: 1
-        }
-        console.log(moment().toISOString())
-        console.log(moment())
+        };
     }
 
     componentDidMount() {
@@ -74,7 +80,7 @@ class Admin extends Component {
 
     onChange = (key) => {
         this.setState({ activeKey: key });
-    }
+    };
 
     showModal = () => {
         this.setState({visible: true});
@@ -90,9 +96,9 @@ class Admin extends Component {
         form.resetFields();
     };
 
-    getPrivilageRequest = () => {
+    getPrivilegeRequest = () => {
         return this.state.activeKey===1 ? {name:"ROLE_INSTRUCTOR"} : {name:"ROLE_ADMIN"}
-    }
+    };
 
     handleCreate = () => {
         const form = this.formRef.props.form;
@@ -100,9 +106,9 @@ class Admin extends Component {
             if (err) {
                 return;
             }
-            const username = values.user.split(" ")[0]
+            const username = values.user.split(" ")[0];
 
-            this.addPrivileges(username,this.getPrivilageRequest());
+            this.addPrivileges(username,this.getPrivilegeRequest());
 
             form.resetFields();
             this.setState({visible: false});
@@ -112,34 +118,42 @@ class Admin extends Component {
     addPrivileges(username, role) {
         addUserRole(username, role).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
             this.props.history.push("/admin");
             this.loadAdminArray();
             this.loadInstructorArray();
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         });
     }
 
     removePrivileges(userId, role) {
         removeUserRole(userId, role).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
             this.props.history.push("/admin");
             this.loadAdminArray();
             this.loadInstructorArray();
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         });
     }
 
@@ -167,7 +181,7 @@ class Admin extends Component {
             width: '20%',
             dataIndex: "id"
         }, {
-            title: 'name',
+            title: NAME_TEXT,
             key: 'name',
             width: '30%',
             render: (text, record) => (
@@ -175,20 +189,20 @@ class Admin extends Component {
                     {record.name}
                 </Link>)
         }, {
-            title: 'username',
+            title: USERNAME_TEXT,
             dataIndex: 'username',
             key: 'username',
             width: '30%'
         }, {
-            title: 'Action',
+            title: ACTION_TEXT,
             key: 'action',
             width: '20%',
             render: (text, record) => (
-                <Popconfirm placement="left" title="Want to remove admin from this user?" onConfirm={() => {
+                <Popconfirm placement="left" title={ADMIN_REMOVAL_TEXT} onConfirm={() => {
                     this.removePrivileges(record.id, {"name": "ROLE_ADMIN"})
                 }}
-                            okText="Yes" cancelText="No">
-                    <a>Remove</a>
+                            okText={YES_TEXT} cancelText={NO_TEXT}>
+                    <a>{REMOVE_TEXT}</a>
                 </Popconfirm>)
         }];
 
@@ -198,7 +212,7 @@ class Admin extends Component {
             width: '20%',
             dataIndex: "id"
         }, {
-            title: 'name',
+            title: NAME_TEXT,
             key: 'name',
             width: '30%',
             render: (text, record) => (
@@ -206,20 +220,20 @@ class Admin extends Component {
                     {record.name}
                 </Link>)
         }, {
-            title: 'username',
+            title: USERNAME_TEXT,
             dataIndex: 'username',
             key: 'username',
             width: '30%'
         }, {
-            title: 'Action',
+            title: ACTION_TEXT,
             key: 'action',
             width: '20%',
             render: (text, record) => (
-                <Popconfirm placement="left" title="Want to remove instructor from this user?" onConfirm={() => {
+                <Popconfirm placement="left" title={INSTRUCTOR_REMOVAL_TEXT} onConfirm={() => {
                     this.removePrivileges(record.id, ({"name": "ROLE_INSTRUCTOR"}))
                 }}
-                            okText="Yes" cancelText="No">
-                    <a>Remove</a>
+                            okText={YES_TEXT} cancelText={NO_TEXT}>
+                    <a>{REMOVE_TEXT}</a>
                 </Popconfirm>)
         }];
 
@@ -233,37 +247,33 @@ class Admin extends Component {
                           className="lesson-tabs"
                           onChange={this.onChange}>
 
-                        <TabPane tab={`Instructors`} key="1">
+                        <TabPane tab={INSTRUCTORS_TEXT} key="1">
                             <div className="instructor-container">
                                 <Table className="instructor-table"
                                        dataSource={this.state.instructorArray}
                                        columns={instructorColumns}
                                        rowKey='id'
                                        rowClassName="lesson-row"
-                                    // scroll={{ x: '100%', y: '100%' }}
-                                    // pagination={false}
                                 />
                                 <Button type="primary"
                                         className={this.state.instructorArray.length > 0 ? 'add-privileges-button' : 'add-privileges-button-no-data'}
                                         onClick={this.showModal}>
-                                    Add instructors</Button>
+                                    {ADD_TEXT} {INSTRUCTORS_TEXT}</Button>
                             </div>
                         </TabPane>
-                        <TabPane tab={`Admins`} key="2">
+                        <TabPane tab={ADMINS_TEXT} key="2">
                             <div className="admin-container">
                                 <Table className="admin-table"
                                        dataSource={this.state.adminArray}
                                        columns={adminColumns}
                                        rowKey='id'
                                        rowClassName="lesson-row"
-                                    // scroll={{ x: '100%', y: '100%' }}
-                                    // pagination={false}
                                 />
 
                                 <Button type="primary"
                                         className={this.state.adminArray.length > 0 ? 'add-privileges-button' : 'add-privileges-button-no-data'}
                                         onClick={this.showModal}>
-                                    Add admins</Button>
+                                    {ADD_TEXT} {ADMINS_TEXT}</Button>
                             </div>
                         </TabPane>
 

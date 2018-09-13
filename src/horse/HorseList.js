@@ -4,11 +4,14 @@ import './HorseList.css';
 import NotFound from '../common/NotFound';
 import ServerError from '../common/ServerError';
 import {addHorse, getAllHorses, deleteHorse, updateHorse} from '../util/APIUtils';
-import {Popconfirm, Button, Modal, Table } from 'antd';
+import {Popconfirm, Button} from 'antd';
 import {notification} from "antd/lib/index";
 import AddHorseForm from "./AddHorseForm";
 import EditableTable from "../EditableTables/EditableTable";
-import EditableTable2 from "../EditableTables/EditableTableSelect";
+import {
+    ACTION_TEXT, ADD_TEXT, APP_NAME, DELETE_HORSE_TEXT, DELETE_TEXT, ERROR_TEXT, HORSE_NAME_TEXT, HORSE_TEXT, NO_TEXT,
+    UNAUTHORIZED_TEXT, YES_TEXT
+} from "../constants/Texts";
 
 class HorseList extends Component {
     constructor(props) {
@@ -38,16 +41,19 @@ class HorseList extends Component {
     delete(horseId) {
         deleteHorse(horseId).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
-            this.props.history.push("/horses");
             this.loadHorseArray()
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         })
     }
 
@@ -71,16 +77,19 @@ class HorseList extends Component {
                 horseName: values.horseName
             }).then(response => {
                 notification.success({
-                    message: 'Ardena',
+                    message: APP_NAME,
                     description: response.message,
                 });
-                this.props.history.push("/horses");
                 this.loadHorseArray()
             }).catch(error => {
-                notification.error({
-                    message: 'Ardena',
-                    description: error.message || 'Sorry! Something went wrong. Please try again!'
-                });
+                if(error.status === 401) {
+                    this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+                } else {
+                    notification.error({
+                        message: APP_NAME,
+                        description: error.message || ERROR_TEXT
+                    });
+                }
             });
 
             form.resetFields();
@@ -98,18 +107,21 @@ class HorseList extends Component {
         updateHorse(row.id,
             {horseName:row.horseName}).then(response => {
             notification.success({
-                message: 'Ardena',
+                message: APP_NAME,
                 description: response.message,
             });
-            this.props.history.push("/horses");
             this.loadHorseArray()
         }).catch(error => {
-            notification.error({
-                message: 'Ardena',
-                description: error.message || 'Sorry! Something went wrong. Please try again!'
-            });
+            if(error.status === 401) {
+                this.props.handleLogout('/login', 'error', UNAUTHORIZED_TEXT);
+            } else {
+                notification.error({
+                    message: APP_NAME,
+                    description: error.message || ERROR_TEXT
+                });
+            }
         })
-    }
+    };
 
     render() {
 
@@ -131,21 +143,21 @@ class HorseList extends Component {
             key: 'id',
             width: '25%'
         }, {
-            title: 'Horse Name',
+            title: HORSE_NAME_TEXT,
             dataIndex: 'horseName',
             key: 'horseName',
             width: '50%',
             editable: true
         }, {
-            title: 'Action',
+            title: ACTION_TEXT,
             key: 'action',
             width: '25%',
             render: (text, record) => (
-                <Popconfirm placement="left" title="Want to delete this horse?" onConfirm={() => {
+                <Popconfirm placement="left" title={DELETE_HORSE_TEXT} onConfirm={() => {
                     this.delete(record.id)
                 }}
-                            okText="Yes" cancelText="No">
-                    <a>Delete</a>
+                            okText={YES_TEXT} cancelText={NO_TEXT}>
+                    <a>{DELETE_TEXT}</a>
                 </Popconfirm>)
         }];
 
@@ -159,28 +171,18 @@ class HorseList extends Component {
                     onCreate={this.handleCreate}
                 />
 
-                {/*<Table className="horse-table"*/}
-                       {/*dataSource={this.state.horseArray}*/}
-                       {/*columns={horseColumns}*/}
-                       {/*rowKey='id'*/}
-                       {/*bordered*/}
-                       {/*rowClassName="horse-row"*/}
-                       {/*scroll={{ x: '100%' }}*/}
-                    {/*// scroll={{ x: '100%', y: '100%' }}*/}
-                    {/*// pagination={false}*/}
-                {/*/>*/}
-
                 <EditableTable
                     className="horse-table"
                     dataSource={this.state.horseArray}
                     columns={horseColumns}
-                    handleSave={this.handleSave}
-                ></EditableTable>
+                    handleSave={this.handleSave}>
+                </EditableTable>
 
                 <Button type="primary"
                         className={this.state.horseArray.length>0 ? 'add-horse-button' : 'add-horse-button-no-data'}
                         onClick={this.showModal}>
-                    Add horse</Button>
+                    {ADD_TEXT} {HORSE_TEXT}
+                </Button>
 
             </div>);
     }
