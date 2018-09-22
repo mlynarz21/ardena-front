@@ -92,10 +92,10 @@ class Event extends Component {
                             (<Button className="vote-button" disabled={!this.props.currentVote}
                                      onClick={this.props.handleVoteSubmit}>{VOTE_TEXT}</Button>) : null
                     }
-                    {
-                        !(this.props.event.options.length === 0) ?
-                            (<span className="total-votes">{this.props.event.totalVotes} {VOTES_TEXT}</span>) : null
-                    }
+                    {/*{*/}
+                        {/*!(this.props.event.options.length === 0) ?*/}
+                            {/*(<span className="total-votes">{this.props.event.totalVotes} {VOTES_TEXT}</span>) : null*/}
+                    {/*}*/}
                 </div>
             </div>
         );

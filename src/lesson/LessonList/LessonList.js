@@ -19,6 +19,7 @@ import {formatDateTimeShort, formatDateToDMY, getIsoStringFromDate} from "../../
 import {
     ACTION_TEXT,
     APP_NAME, CANCEL_TEXT, DATE_TEXT, ERROR_TEXT, HORSE_TEXT, INSTRUCTOR_TEXT, LESSON_LEVEL_TEXT, LESSON_TEXT,
+    LEVEL_TEXT,
     MY_HISTORY_TEXT,
     MY_LESSONS_TEXT,
     NO_TEXT, PASS_TEXT,
@@ -267,7 +268,7 @@ class LessonList extends Component {
                    {record.id}
                 </Link>)
         }, {
-            title: LESSON_LEVEL_TEXT,
+            title: LEVEL_TEXT,
             dataIndex: 'lessonLevel',
             key: 'lessonLevel',
             width: '15%'
@@ -309,7 +310,7 @@ class LessonList extends Component {
                     {record.id}
                 </Link>)
         }, {
-            title: LESSON_LEVEL_TEXT,
+            title: LEVEL_TEXT,
             dataIndex: 'lesson.lessonLevel',
             key: 'lessonLevel',
             width: '10%'
@@ -361,7 +362,7 @@ class LessonList extends Component {
                     {record.id}
                 </Link>)
         }, {
-            title: LESSON_LEVEL_TEXT,
+            title: LEVEL_TEXT,
             dataIndex: 'lesson.lessonLevel',
             key: 'lessonLevel',
             width: '10%',
@@ -423,7 +424,7 @@ class LessonList extends Component {
                     {record.id}
                 </Link>)
         }, {
-            title: LESSON_LEVEL_TEXT,
+            title: LEVEL_TEXT,
             dataIndex: 'lesson.lessonLevel',
             key: 'lessonLevel',
             width: '10%'
@@ -464,7 +465,7 @@ class LessonList extends Component {
                       size="large"
                       className="lesson-tabs">
 
-                    <TabPane tab={RESERVE_TEXT + LESSON_TEXT} key="1">
+                    <TabPane tab={RESERVE_TEXT +" "+ LESSON_TEXT} key="1">
                         <div className="flex-container">
                             <div className="lesson-calendar">
                                 <Alert className="date-alert"

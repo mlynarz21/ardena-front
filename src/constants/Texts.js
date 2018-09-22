@@ -97,6 +97,7 @@ export const PENDING_RESERVATIONS_TEXT = 'Pending reservations';
 export const PENDING_PAYMENTS_TEXT = 'Pending payments';
 export const RIDERS_TEXT = 'Riders';
 export const STATUS_TEXT = 'Status';
+export const LEVEL_TEXT = 'Level';
 
 
 
