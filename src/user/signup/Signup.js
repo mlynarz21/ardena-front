@@ -2,22 +2,24 @@ import React, { Component } from 'react';
 import { signup, checkUsernameAvailability, checkEmailAvailability } from '../../util/APIUtils';
 import './Signup.css';
 import { Link } from 'react-router-dom';
-import { 
-    NAME_MIN_LENGTH, NAME_MAX_LENGTH, 
+import {
+    NAME_MIN_LENGTH, NAME_MAX_LENGTH,
     USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH,
     EMAIL_MAX_LENGTH,
-    PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH
+    PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH, PHONE_LENGTH
 } from '../../constants';
 
-import { Form, Input, Button, notification } from 'antd';
+import {Form, Input, Button, notification, DatePicker} from 'antd';
 import {
     ALREADY_REGISTERED_TEXT,
-    APP_NAME, EMAIL_TEXT, ERROR_TEXT, FULL_NAME_TEXT, LOGIN_TEXT, PASSWORD_TEXT, REGISTER_NOTIFICATION_TEXT,
+    APP_NAME, BIRTHDAY_TEXT, EMAIL_TEXT, ERROR_TEXT, FULL_NAME_TEXT, LESSON_DATE_TEXT, LOGIN_TEXT, PASSWORD_TEXT,
+    PHONE_TEXT,
+    REGISTER_NOTIFICATION_TEXT, SAMPLE_BIRTHDAY,
     SAMPLE_MAIL,
-    SAMPLE_NAME, SAMPLE_PASSWORD, SAMPLE_USERNAME,
+    SAMPLE_NAME, SAMPLE_PASSWORD, SAMPLE_PHONE, SAMPLE_USERNAME,
     SIGNUP_TEXT,
     UNAUTHORIZED_TEXT,
-    USER_TEXT, USERNAME_TEXT
+    USER_TEXT, USERNAME_TEXT, VALIDATION_TEXT
 } from "../../constants/Texts";
 const FormItem = Form.Item;
 
@@ -35,6 +37,12 @@ class Signup extends Component {
                 value: ''
             },
             password: {
+                value: ''
+            },
+            phoneNumber: {
+                value: ''
+            },
+            birthDate: {
                 value: ''
             }
         };
@@ -65,7 +73,9 @@ class Signup extends Component {
             name: this.state.name.value,
             email: this.state.email.value,
             username: this.state.username.value,
-            password: this.state.password.value
+            password: this.state.password.value,
+            phoneNumber: this.state.phoneNumber.value,
+            birthDate: this.state.birthDate.value
         };
         signup(signupRequest)
             .then(response => {
@@ -90,7 +100,9 @@ class Signup extends Component {
         return !(this.state.name.validateStatus === 'success' &&
             this.state.username.validateStatus === 'success' &&
             this.state.email.validateStatus === 'success' &&
-            this.state.password.validateStatus === 'success'
+            this.state.password.validateStatus === 'success' &&
+            this.state.phoneNumber.validateStatus === 'success' &&
+            this.state.birthDate.validateStatus === 'success'
         );
     }
 
@@ -139,6 +151,31 @@ class Signup extends Component {
                                 value={this.state.email.value}
                                 onBlur={this.validateEmailAvailability}
                                 onChange={(event) => this.handleInputChange(event, this.validateEmail)}/>
+                        </FormItem>
+                        <FormItem
+                            label={PHONE_TEXT}
+                            validateStatus={this.state.phoneNumber.validateStatus}
+                            help={this.state.phoneNumber.errorMsg}>
+                            <Input
+                                size="large"
+                                name="phoneNumber"
+                                autoComplete="off"
+                                placeholder={SAMPLE_PHONE}
+                                value={this.state.phoneNumber.value}
+                                onChange={(event) => this.handleInputChange(event, this.validatePhone)}/>
+                        </FormItem>
+                        <FormItem
+                            label={BIRTHDAY_TEXT}
+                            validateStatus={this.state.birthDate.validateStatus}
+                            help={this.state.birthDate.errorMsg}>
+                                <DatePicker
+                                    size="large"
+                                    name="birthDate"
+                                    placeholder={SAMPLE_BIRTHDAY}
+                                    value={this.state.birthDate.value}
+                                    validateBirthDate
+                                    onChange={(event) => this.validateBirthDate(event)}
+                                />
                         </FormItem>
                         <FormItem
                             label={PASSWORD_TEXT}
@@ -361,6 +398,35 @@ class Signup extends Component {
                 errorMsg: null,
             };
         }
+    };
+
+    validatePhone = (phone) => {
+        if (phone.length !== PHONE_LENGTH) {
+            return {
+                validateStatus: 'error',
+                errorMsg: `Phone must contain ${PHONE_LENGTH} characters`
+            }
+        } else {
+            return {
+                validateStatus: 'success',
+                errorMsg: null,
+            };
+        }
+    };
+
+    validateBirthDate = (date) => {
+        date = date.set({
+            'hour' : 12,
+            'minute'  : 0,
+            'second' : 0
+        });
+
+        this.setState({
+                birthDate: {
+                    value: date,
+                    validateStatus: 'success',
+                    errorMsg: null,
+                }});
     }
 
 }
