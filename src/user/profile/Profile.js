@@ -10,7 +10,10 @@ import NotFound from '../../common/NotFound';
 import ServerError from '../../common/ServerError';
 import Pass from "../../pass/Pass";
 import Event from "../../event/Event";
-import {EVENTS_TEXT, JOINED_TEXT, PASSES_TEXT, RIDER_LEVEL_TEXT, VOTES_TEXT} from "../../constants/Texts";
+import {
+    EVENTS_TEXT, JOINED_TEXT, PASSES_TEXT, PHONE_TEXT, RIDER_AGE, RIDER_LEVEL_TEXT,
+    VOTES_TEXT
+} from "../../constants/Texts";
 
 const TabPane = Tabs.TabPane;
 
@@ -97,6 +100,12 @@ class Profile extends Component {
                                     </div>
                                     <div className="user-level">
                                         <b>{RIDER_LEVEL_TEXT}: {this.state.user.level}</b>
+                                    </div>
+                                    <div className="user-phone">
+                                        <b>{PHONE_TEXT}: {this.state.user.phoneNumber}</b>
+                                    </div>
+                                    <div className="user-age">
+                                        <b>{RIDER_AGE}: {this.state.user.age}</b>
                                     </div>
                                 </div>
                             </div>

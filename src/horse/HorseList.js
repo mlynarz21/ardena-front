@@ -9,7 +9,8 @@ import {notification} from "antd/lib/index";
 import AddHorseForm from "./AddHorseForm";
 import EditableTable from "../EditableTables/EditableTable";
 import {
-    ACTION_TEXT, ADD_TEXT, APP_NAME, DELETE_HORSE_TEXT, DELETE_TEXT, ERROR_TEXT, HORSE_NAME_TEXT, HORSE_TEXT, NO_TEXT,
+    ACTION_TEXT, ADD_TEXT, APP_NAME, DELETE_HORSE_TEXT, DELETE_TEXT, ERROR_TEXT, HORSE_LEVEL_TEXT, HORSE_NAME_TEXT,
+    HORSE_TEXT, NO_TEXT,
     UNAUTHORIZED_TEXT, YES_TEXT
 } from "../constants/Texts";
 
@@ -74,7 +75,8 @@ class HorseList extends Component {
                 return;
             }
             addHorse({
-                horseName: values.horseName
+                horseName: values.horseName,
+                horseLevel: values.horseLevel
             }).then(response => {
                 notification.success({
                     message: APP_NAME,
@@ -105,7 +107,10 @@ class HorseList extends Component {
 
     handleSave = (row) => {
         updateHorse(row.id,
-            {horseName:row.horseName}).then(response => {
+            {
+                horseName:row.horseName,
+                horseLevel:row.horseLevel
+            }).then(response => {
             notification.success({
                 message: APP_NAME,
                 description: response.message,
@@ -146,7 +151,13 @@ class HorseList extends Component {
             title: HORSE_NAME_TEXT,
             dataIndex: 'horseName',
             key: 'horseName',
-            width: '50%',
+            width: '20%',
+            editable: true
+        }, {
+            title: HORSE_LEVEL_TEXT,
+            dataIndex: 'horseLevel',
+            key: 'horseLevel',
+            width: '30%',
             editable: true
         }, {
             title: ACTION_TEXT,
