@@ -161,6 +161,7 @@ class LessonList extends Component {
             });
             this.props.history.push("/lessons");
             this.loadReservationArray();
+            this.loadLessonArray();
             this.loadLessonArrayByDate({date: getIsoStringFromDate(this.state.value)});
         }).catch(error => {
             if(error.status === 401) {
@@ -182,6 +183,7 @@ class LessonList extends Component {
             });
             this.props.history.push("/lessons");
             this.loadReservationArray();
+            this.loadLessonArray();
             this.loadLessonArrayByDate({date: getIsoStringFromDate(this.state.value)});
         }).catch(error => {
             if(error.status === 401) {

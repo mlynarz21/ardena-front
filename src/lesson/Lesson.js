@@ -18,9 +18,11 @@ import EditLessonForm from "./EditLessonForm";
 import moment from "moment";
 import {formatDateTime} from "../util/Helpers";
 import {
+    ACCEPT_TEXT,
     ACTION_TEXT,
-    APP_NAME, DATE_TEXT, ERROR_TEXT, HORSE_TEXT, INSTRUCTOR_TEXT, LESSON_LEVEL_TEXT, NO_HORSE_TEXT, NO_TEXT, PASS_TEXT,
-    PAY_CASH_TEXT,
+    APP_NAME, CANCEL_TEXT, DATE_TEXT, ERROR_TEXT, HORSE_TEXT, INSTRUCTOR_TEXT, LESSON_LEVEL_TEXT, NO_HORSE_TEXT,
+    NO_TEXT, PASS_TEXT,
+    PAY_CASH_TEXT, RESERVATION_ACCEPT_TEXT, RESERVATION_CANCEL_TEXT,
     RESERVATION_PAY_CASH_TEXT,
     RESERVATION_PAY_PASS_TEXT,
     RIDER_NAME_TEXT,
@@ -177,31 +179,68 @@ class Lesson extends Component {
     }
 
     renderPopconfirm(record) {
-        if (record.status === "Pending") {
-            return (
-                <div>
-                    <Popconfirm placement="left" title="Want to accept this reservation?" onConfirm={() => {
-                        this.confirmAccept(record.id)
-                    }}
-                                okText={YES_TEXT} cancelText={NO_TEXT}>
-                        <a>Accept </a>
-                    </Popconfirm>
-                    <Divider type="vertical"/>
-                    <Popconfirm placement="left" title="Want to cancel this lesson?" onConfirm={() => {
+        if(localStorage.getItem(isInstructor) === 'true') {
+            if (record.status === "Pending") {
+                return (
+                    <div>
+                        <Popconfirm placement="left" title={RESERVATION_ACCEPT_TEXT} onConfirm={() => {
+                            this.confirmAccept(record.id)
+                        }}
+                                    okText={YES_TEXT} cancelText={NO_TEXT}>
+                            <a>{ACCEPT_TEXT} </a>
+                        </Popconfirm>
+                        <Divider type="vertical"/>
+                        <Popconfirm placement="left" title={RESERVATION_CANCEL_TEXT} onConfirm={() => {
+                            this.confirmCancel(record.id)
+                        }}
+                                    okText={YES_TEXT} cancelText={NO_TEXT}>
+                            <a> {CANCEL_TEXT}</a>
+                        </Popconfirm>
+                    </div>
+                )
+            } else if (record.status === "Confirmed") {
+                return (<div className="pending-pop">
+                    <Popconfirm placement="left" title={RESERVATION_CANCEL_TEXT} onConfirm={() => {
                         this.confirmCancel(record.id)
                     }}
                                 okText={YES_TEXT} cancelText={NO_TEXT}>
-                        <a> Cancel</a>
+                        <a> {CANCEL_TEXT}</a>
+                    </Popconfirm>
+                    <Divider type="vertical"/>
+                    <Popconfirm placement="left" title={RESERVATION_PAY_PASS_TEXT} onConfirm={() => {
+                        this.payReservation(record.id, {status: "Paid_pass"});
+                    }}
+                                okText={YES_TEXT} cancelText={NO_TEXT}>
+                        <a>{PASS_TEXT}</a>
+                    </Popconfirm>
+                    <Divider type="vertical"/>
+                    <Popconfirm placement="left" title={RESERVATION_PAY_CASH_TEXT} onConfirm={() => {
+                        this.payReservation(record.id, {status: "Paid_cash"});
+                    }}
+                                okText={YES_TEXT} cancelText={NO_TEXT}>
+                        <a>{PAY_CASH_TEXT}</a>
+                    </Popconfirm>
+                </div>)
+            }
+        }
+        else if (record.status === "Pending") {
+            return (
+                <div>
+                    <Popconfirm placement="left" title={RESERVATION_CANCEL_TEXT} onConfirm={() => {
+                        this.confirmCancel(record.id)
+                    }}
+                                okText={YES_TEXT} cancelText={NO_TEXT}>
+                        <a>{CANCEL_TEXT}</a>
                     </Popconfirm>
                 </div>
             )
         } else if (record.status === "Confirmed") {
             return (<div className="pending-pop">
-                <Popconfirm placement="left" title="Want to cancel this lesson?" onConfirm={() => {
+                <Popconfirm placement="left" title={RESERVATION_CANCEL_TEXT} onConfirm={() => {
                     this.confirmCancel(record.id)
                 }}
                             okText={YES_TEXT} cancelText={NO_TEXT}>
-                    <a> Cancel</a>
+                    <a> {CANCEL_TEXT}</a>
                 </Popconfirm>
                 <Divider type="vertical"/>
                 <Popconfirm placement="left" title={RESERVATION_PAY_PASS_TEXT} onConfirm={() => {
@@ -209,13 +248,6 @@ class Lesson extends Component {
                 }}
                             okText={YES_TEXT} cancelText={NO_TEXT}>
                     <a>{PASS_TEXT}</a>
-                </Popconfirm>
-                <Divider type="vertical"/>
-                <Popconfirm placement="left" title={RESERVATION_PAY_CASH_TEXT} onConfirm={() => {
-                    this.payReservation(record.id, {status: "Paid_cash"});
-                }}
-                            okText={YES_TEXT} cancelText={NO_TEXT}>
-                    <a>{PAY_CASH_TEXT}</a>
                 </Popconfirm>
             </div>)
         }
@@ -359,15 +391,16 @@ class Lesson extends Component {
         } else return (
             <div className="lesson-container">
                 <div className="flex-alert">
+                    <Alert className="lesson-info-date"
+                           message={`${DATE_TEXT}: ${formatDateTime(this.state.lesson.date)}`}/>
                     <Link className="user-link" to={`/users/${this.state.lesson.instructor.username}`}>
-                        <Alert className="lesson-info"
+                        <Alert className="lesson-info-instructor"
                                message={`${INSTRUCTOR_TEXT}: ${this.state.lesson.instructor.name}`}/>
                     </Link>
-                    <Alert className="lesson-info"
-                           message={`${DATE_TEXT}: ${formatDateTime(this.state.lesson.date)}`}/>
-                    <Alert className="lesson-info"
+                    <Alert className="lesson-info-level"
                            message={`${LESSON_LEVEL_TEXT}: ${this.state.lesson.lessonLevel}`}/>
                 </div>
+
                 <Table className="reservations-table"
                        dataSource={this.state.lesson.reservations}
                        columns={reservationColumns}
